@@ -3,27 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>餐旅概論雲端闖關與檢測系統 - 遊戲</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>餐旅概論 - 闖關與全真檢測</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <!-- Load Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     
-    <!-- Load Questions Database -->
+    <!-- Load Question Database -->
     <script src="questions.js"></script>
-    
+
     <style>
-        :root {
-            --bg-color: #0b0f19;
-            --card-bg: rgba(255, 255, 255, 0.05);
+        /* ================= THEME DEFINITIONS ================= */
+        :root, [data-theme="midnight"] {
+            --bg-gradient: radial-gradient(circle at 50% 15%, #1e1b4b 0%, #0b0f19 85%);
+            --card-bg: rgba(22, 27, 46, 0.65);
             --card-border: rgba(255, 255, 255, 0.1);
-            --primary: #4f46e5;
-            --primary-glow: rgba(79, 70, 229, 0.4);
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-glow: rgba(99, 102, 241, 0.35);
             --success: #10b981;
             --error: #ef4444;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
+            --warning: #fbbf24;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --surface-hover: rgba(255, 255, 255, 0.05);
+            --input-bg: rgba(11, 15, 25, 0.7);
+            --modal-bg: #15192b;
+            --choice-bg: rgba(255, 255, 255, 0.04);
+            --choice-border: rgba(255, 255, 255, 0.08);
+            --chapter-header-bg: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(30, 27, 75, 0.4));
+        }
+
+        [data-theme="ocean"] {
+            --bg-gradient: radial-gradient(circle at 50% 15%, #0c3359 0%, #051324 85%);
+            --card-bg: rgba(12, 38, 66, 0.65);
+            --card-border: rgba(56, 189, 248, 0.15);
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --primary-glow: rgba(2, 132, 199, 0.35);
+            --success: #06b6d4;
+            --error: #f43f5e;
+            --warning: #facc15;
+            --text-main: #f0f9ff;
+            --text-muted: #7dd3fc;
+            --surface-hover: rgba(56, 189, 248, 0.08);
+            --input-bg: rgba(5, 19, 36, 0.7);
+            --modal-bg: #092038;
+            --choice-bg: rgba(56, 189, 248, 0.04);
+            --choice-border: rgba(56, 189, 248, 0.1);
+            --chapter-header-bg: linear-gradient(135deg, rgba(2, 132, 199, 0.2), rgba(12, 38, 66, 0.4));
+        }
+
+        [data-theme="forest"] {
+            --bg-gradient: radial-gradient(circle at 50% 15%, #064e3b 0%, #02241b 85%);
+            --card-bg: rgba(6, 60, 46, 0.65);
+            --card-border: rgba(52, 211, 153, 0.15);
+            --primary: #059669;
+            --primary-hover: #047857;
+            --primary-glow: rgba(5, 150, 105, 0.35);
+            --success: #34d399;
+            --error: #fb7185;
+            --warning: #fde047;
+            --text-main: #ecfdf5;
+            --text-muted: #6ee7b7;
+            --surface-hover: rgba(52, 211, 153, 0.08);
+            --input-bg: rgba(2, 36, 27, 0.7);
+            --modal-bg: #043629;
+            --choice-bg: rgba(52, 211, 153, 0.04);
+            --choice-border: rgba(52, 211, 153, 0.1);
+            --chapter-header-bg: linear-gradient(135deg, rgba(5, 150, 105, 0.2), rgba(6, 60, 46, 0.4));
+        }
+
+        [data-theme="sunset"] {
+            --bg-gradient: radial-gradient(circle at 50% 15%, #4a044e 0%, #1a0320 85%);
+            --card-bg: rgba(58, 6, 61, 0.65);
+            --card-border: rgba(244, 114, 182, 0.15);
+            --primary: #c026d3;
+            --primary-hover: #a21caf;
+            --primary-glow: rgba(192, 38, 211, 0.35);
+            --success: #10b981;
+            --error: #f43f5e;
+            --warning: #fbbf24;
+            --text-main: #fdf4ff;
+            --text-muted: #f0abfc;
+            --surface-hover: rgba(244, 114, 182, 0.08);
+            --input-bg: rgba(26, 3, 32, 0.7);
+            --modal-bg: #350438;
+            --choice-bg: rgba(244, 114, 182, 0.04);
+            --choice-border: rgba(244, 114, 182, 0.1);
+            --chapter-header-bg: linear-gradient(135deg, rgba(192, 38, 211, 0.2), rgba(58, 6, 61, 0.4));
+        }
+
+        [data-theme="light"] {
+            --bg-gradient: radial-gradient(circle at 50% 15%, #e2e8f0 0%, #f8fafc 85%);
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --card-border: rgba(99, 102, 241, 0.2);
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-glow: rgba(79, 70, 229, 0.25);
+            --success: #059669;
+            --error: #dc2626;
+            --warning: #d97706;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --surface-hover: rgba(79, 70, 229, 0.06);
+            --input-bg: #ffffff;
+            --modal-bg: #ffffff;
+            --choice-bg: rgba(241, 245, 249, 0.8);
+            --choice-border: rgba(203, 213, 225, 0.8);
+            --chapter-header-bg: linear-gradient(135deg, rgba(224, 231, 255, 0.8), rgba(241, 245, 249, 0.9));
         }
 
         * {
@@ -32,132 +121,349 @@
             padding: 0;
             font-family: 'Outfit', 'Noto Sans TC', sans-serif;
             -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         body {
-            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, var(--bg-color) 80%);
+            background: var(--bg-gradient);
             color: var(--text-main);
             min-height: 100vh;
+            padding: 30px 15px;
             display: flex;
             justify-content: center;
-            align-items: center;
-            overflow-x: hidden;
-            padding: 20px;
         }
+
+        /* Theme Switcher Bar */
+        .theme-bar {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 5px 12px;
+            border-radius: 30px;
+            backdrop-filter: blur(16px);
+            z-index: 100;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+        }
+
+        .theme-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s ease;
+        }
+
+        .theme-dot:hover { transform: scale(1.15); }
+        .theme-dot.active { border-color: #ffffff; transform: scale(1.1); box-shadow: 0 0 8px rgba(255,255,255,0.6); }
+
+        .dot-midnight { background: linear-gradient(135deg, #1e1b4b, #6366f1); }
+        .dot-ocean { background: linear-gradient(135deg, #0c3359, #0284c7); }
+        .dot-forest { background: linear-gradient(135deg, #064e3b, #10b981); }
+        .dot-sunset { background: linear-gradient(135deg, #4a044e, #c026d3); }
+        .dot-light { background: linear-gradient(135deg, #ffffff, #94a3b8); border: 1px solid #cbd5e1; }
 
         .container {
             width: 100%;
-            max-width: 650px;
+            max-width: 900px;
         }
 
-        .game-card {
+        .main-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            backdrop-filter: blur(16px);
-            border-radius: 24px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 50px rgba(79, 70, 229, 0.1);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
+            backdrop-filter: blur(24px);
+            border-radius: 28px;
+            padding: 35px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
         }
 
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            text-align: center;
-            background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
+        @media (max-width: 768px) {
+            .main-card { padding: 22px 18px; border-radius: 22px; }
+            body { padding: 60px 10px 30px; }
         }
 
-        .subtitle {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            text-align: center;
+        /* Top Bar */
+        .user-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 25px;
-        }
-
-        /* User Banner */
-        .user-info-banner {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.03);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 10px 20px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        /* Status & Progress */
-        .status-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--card-border);
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .badge {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 6px 14px;
-            border-radius: 30px;
-            color: #c7d2fe;
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .score-badge {
-            color: #fbbf24;
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid rgba(251, 191, 36, 0.2);
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: white;
+            box-shadow: 0 4px 12px var(--primary-glow);
         }
 
-        .progress-container {
-            width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
+        .user-detail h3 { font-size: 1.05rem; font-weight: 800; }
+        .user-detail p { font-size: 0.82rem; color: var(--text-muted); }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 18px var(--primary-glow); }
+        .btn-outline { background: var(--surface-hover); border: 1px solid var(--card-border); color: var(--text-main); }
+        .btn-outline:hover { background: rgba(255,255,255,0.1); }
+        .btn-danger { background: var(--error); }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-warning { background: var(--warning); color: #000; }
+
+        /* Mode Selector Switch */
+        .mode-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface-hover);
+            border: 1px solid var(--card-border);
+            padding: 12px 20px;
+            border-radius: 18px;
             margin-bottom: 25px;
-            overflow: hidden;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
-        .progress-bar {
+        .mode-options {
+            display: flex;
+            gap: 8px;
+            background: var(--input-bg);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+        }
+
+        .mode-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 9px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px var(--primary-glow);
+        }
+
+        /* Chapter Section Styling */
+        .chapter-group {
+            margin-bottom: 28px;
+        }
+
+        .chapter-header {
+            background: var(--chapter-header-bg);
+            border: 1px solid var(--card-border);
+            padding: 12px 18px;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chapter-header h4 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+        }
+
+        .level-card {
+            background: var(--surface-hover);
+            border: 1.5px solid var(--card-border);
+            border-radius: 16px;
+            padding: 14px 10px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.22s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 86px;
+        }
+
+        .level-card:hover:not(.locked) {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px var(--primary-glow);
+        }
+
+        .level-card.locked {
+            opacity: 0.45;
+            cursor: not-allowed;
+            filter: grayscale(0.8);
+        }
+
+        .level-card.summary-exam {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.12), rgba(245, 158, 11, 0.2));
+            border-color: rgba(251, 191, 36, 0.35);
+        }
+
+        .level-card.mock-exam {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(5, 150, 105, 0.2));
+            border-color: rgba(16, 185, 129, 0.35);
+        }
+
+        .level-card.passed::after {
+            content: '⭐';
+            position: absolute;
+            top: 5px;
+            right: 6px;
+            font-size: 0.75rem;
+        }
+
+        .level-number {
+            font-size: 1.15rem;
+            font-weight: 900;
+            margin-bottom: 2px;
+        }
+
+        .level-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        /* Gameplay Arena */
+        .game-arena {
+            display: none;
+        }
+
+        .quiz-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .progress-bar-fill {
             height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
             width: 0%;
-            background: linear-gradient(90deg, #6366f1, #a5b4fc);
-            border-radius: 3px;
             transition: width 0.3s ease;
         }
 
-        /* Question Box */
         .question-box {
-            margin-bottom: 30px;
+            background: var(--surface-hover);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 25px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
         }
 
-        .q-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #ffffff;
-            line-height: 1.5;
+        .question-badge {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary);
+            border: 1px solid var(--primary-glow);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 800;
             margin-bottom: 10px;
+            align-self: flex-start;
         }
 
-        /* Choices Grid */
+        .question-text {
+            font-size: 1.18rem;
+            font-weight: 700;
+            line-height: 1.6;
+        }
+
+        .audio-play-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            align-self: flex-start;
+        }
+
         .choices-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 12px;
+            margin-bottom: 25px;
         }
 
         .choice-btn {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--choice-bg);
+            border: 1.5px solid var(--choice-border);
             color: var(--text-main);
             padding: 16px 20px;
             border-radius: 16px;
@@ -168,252 +474,115 @@
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
-            position: relative;
+            gap: 14px;
         }
 
-        .choice-btn:hover:not(.disabled) {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        .choice-btn:hover {
+            background: var(--surface-hover);
+            border-color: var(--primary);
+            transform: translateX(4px);
         }
 
-        .choice-index {
-            width: 26px;
-            height: 26px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
+        .choice-key {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
             display: flex;
-            justify-content: center;
             align-items: center;
-            font-size: 0.85rem;
-            margin-right: 15px;
-            color: var(--text-muted);
-            font-weight: bold;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: var(--primary);
             flex-shrink: 0;
         }
 
-        .choice-text {
-            flex: 1;
-        }
-
-        .choice-btn.correct {
-            background: rgba(16, 185, 129, 0.15) !important;
-            border-color: var(--success) !important;
-            color: #a7f3d0 !important;
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
-        }
-
-        .choice-btn.correct .choice-index {
-            background: var(--success);
-            color: white;
-        }
-
-        .choice-btn.incorrect {
-            background: rgba(239, 68, 68, 0.15) !important;
-            border-color: var(--error) !important;
-            color: #fca5a5 !important;
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
-        }
-
-        .choice-btn.incorrect .choice-index {
-            background: var(--error);
-            color: white;
-        }
-
-        /* Levels Grid */
-        .level-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-height: 60vh;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        .chapter-header {
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: #a5b4fc;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 15px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .level-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 16px;
-            padding: 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .level-card:hover:not(.locked) {
-            background: rgba(79, 70, 229, 0.1);
-            border-color: var(--primary);
-            transform: scale(1.01);
-        }
-
-        .level-name {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 4px;
-        }
-
-        .level-meta {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .level-btn {
-            background: var(--primary);
-            border: none;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .level-card.locked {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
-        /* Buttons */
-        .action-btn {
-            background: var(--primary);
-            border: none;
-            color: white;
-            padding: 14px 28px;
-            border-radius: 14px;
-            font-weight: 600;
-            font-size: 1.05rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            width: 100%;
-            margin-top: 10px;
-            box-shadow: 0 4px 12px var(--primary-glow);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .action-btn:hover {
-            background: #6366f1;
-            transform: translateY(-2px);
-        }
-
-        .action-btn-outline {
-            background: transparent;
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            color: var(--text-main);
-            box-shadow: none;
-        }
-
-        .action-btn-outline:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        /* Results Screen */
-        .result-circle {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            border: 8px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin: 25px auto;
-        }
-
-        .result-score {
-            font-size: 3.2rem;
-            font-weight: 800;
-            line-height: 1.1;
-        }
-
-        .result-circle.pass {
-            border-color: rgba(16, 185, 129, 0.2);
-            background: rgba(16, 185, 129, 0.05);
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
-        }
-        .result-circle.pass .result-score {
-            color: var(--success);
-        }
-
-        .result-circle.fail {
-            border-color: rgba(239, 68, 68, 0.2);
-            background: rgba(239, 68, 68, 0.05);
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.1);
-        }
-        .result-circle.fail .result-score {
-            color: var(--error);
-        }
-
-        .result-comment {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 20px;
+        /* Result View */
+        .result-view {
+            display: none;
             text-align: center;
+            padding: 20px 0;
         }
 
-        /* Wrong Questions Review List */
-        .wrong-review-container {
-            margin-top: 25px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 20px;
+        .score-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: var(--surface-hover);
+            border: 4px solid var(--primary);
+            box-shadow: 0 0 35px var(--primary-glow);
+            margin: 0 auto 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .score-num { font-size: 2.8rem; font-weight: 900; color: var(--text-main); }
+        .score-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 700; }
+
+        /* Wrong Questions Review */
+        .wrong-section {
+            margin-top: 35px;
             text-align: left;
-            max-height: 350px;
-            overflow-y: auto;
+            border-top: 1px solid var(--card-border);
+            padding-top: 25px;
         }
 
-        .wrong-q-item {
-            background: rgba(239, 68, 68, 0.05);
-            border: 1px solid rgba(239, 68, 68, 0.15);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 12px;
+        .wrong-card {
+            background: var(--surface-hover);
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 16px;
         }
 
         .wrong-q-title {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 8px;
+            font-weight: 800;
+            font-size: 1.02rem;
+            margin-bottom: 12px;
+            color: var(--text-main);
         }
 
-        .wrong-q-detail {
-            font-size: 0.85rem;
+        .wrong-answers-badge {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge-user-ans {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
             color: #fca5a5;
-            margin-bottom: 6px;
-        }
-
-        .wrong-q-explanation {
+            padding: 4px 10px;
+            border-radius: 8px;
             font-size: 0.85rem;
-            color: #a7f3d0;
-            background: rgba(16, 185, 129, 0.08);
-            border-left: 3px solid var(--success);
-            padding: 8px;
-            margin-top: 8px;
-            border-radius: 0 6px 6px 0;
+            font-weight: 700;
         }
 
-        /* Modal Dialog */
+        .badge-correct-ans {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .explanation-box {
+            background: var(--input-bg);
+            border-left: 3px solid var(--primary);
+            padding: 12px 14px;
+            border-radius: 0 10px 10px 0;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Problem Report Modal */
         .modal {
             position: fixed;
             z-index: 1000;
@@ -421,487 +590,513 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(11, 15, 25, 0.85);
-            backdrop-filter: blur(8px);
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(12px);
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
         .modal-content {
-            background: #1e1b4b;
+            background: var(--modal-bg);
             border: 1px solid var(--card-border);
-            border-radius: 24px;
-            width: 90%;
-            max-width: 450px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-            animation: modalFadeIn 0.3s ease-out;
-        }
-
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .textarea-control {
+            border-radius: 26px;
             width: 100%;
-            height: 120px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--card-border);
-            color: white;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            outline: none;
-            resize: none;
-            margin-bottom: 15px;
+            max-width: 480px;
+            padding: 30px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
         }
-        .textarea-control:focus {
-            border-color: var(--primary);
-        }
-
-        /* Animations */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
-        }
-        .shake { animation: shake 0.3s ease; }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
-        .bounce { animation: bounce 0.4s ease; }
     </style>
 </head>
 <body>
+    <!-- Theme Switcher -->
+    <div class="theme-bar">
+        <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted);">🎨 底色：</span>
+        <div class="theme-dot dot-midnight" title="星空暗夜" onclick="setTheme('midnight')"></div>
+        <div class="theme-dot dot-ocean" title="沉靜湛藍" onclick="setTheme('ocean')"></div>
+        <div class="theme-dot dot-forest" title="森林翡翠" onclick="setTheme('forest')"></div>
+        <div class="theme-dot dot-sunset" title="暮光幻紫" onclick="setTheme('sunset')"></div>
+        <div class="theme-dot dot-light" title="晨曦明亮" onclick="setTheme('light')"></div>
+    </div>
+
     <div class="container">
-        <div class="game-card" id="gameCard">
-            <!-- Screen 1: Level Selector -->
-            <div id="levelScreen">
-                <div class="user-info-banner">
-                    <div>
-                        <span style="font-weight: bold; color: white;" id="userSchoolLabel">載校中...</span>
-                        <br>
-                        <span id="userNameLabel">載名中...</span>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="level-btn" style="padding: 6px 12px; background: transparent; border: 1px solid rgba(255,255,255,0.2);" onclick="logout()">登出</button>
+        <div class="main-card">
+            
+            <!-- User Nav Header -->
+            <div class="user-nav">
+                <div class="user-info">
+                    <div class="user-avatar" id="avatarLetter">U</div>
+                    <div class="user-detail">
+                        <h3 id="displayStudentName">學生姓名</h3>
+                        <p id="displayStudentSchool">學校名稱</p>
                     </div>
                 </div>
-                <h1>關卡選擇</h1>
-                <div class="subtitle">需獲得 85 分以上才能解鎖下一關</div>
-                
-                <div class="level-grid" id="levelGrid">
-                    <!-- Populated dynamically -->
+                <div style="display: flex; gap: 8px;">
+                    <a href="index.html" class="btn btn-outline">🏆 回榮譽榜</a>
+                    <button onclick="handleLogout()" class="btn btn-danger" style="padding: 8px 12px; font-size: 0.85rem;">登出</button>
                 </div>
             </div>
 
-            <!-- Screen 2: Game Board -->
-            <div id="gameScreen" style="display: none;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; margin-top: -10px; align-items: center;">
-                    <span style="font-size: 0.85rem; color: var(--error); cursor: pointer;" onclick="confirmExit()">🚪 暫時離開</span>
-                    <button class="level-btn" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5;" onclick="openReportModal()">🚩 問題回報</button>
+            <!-- VIEW 1: Level Selection Map -->
+            <div id="levelSelectView">
+                <div class="mode-container">
+                    <div>
+                        <strong style="font-size: 0.95rem;">🎯 闖關模式</strong>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">選擇作答習慣，滿 85 分過關解鎖下一關</div>
+                    </div>
+                    <div class="mode-options">
+                        <button id="modeRead" class="mode-btn active" onclick="switchMode('reading')">📖 閱讀認字</button>
+                        <button id="modeAudio" class="mode-btn" onclick="switchMode('audio')">🎧 聽音辨字</button>
+                    </div>
                 </div>
-                
-                <div class="status-bar">
-                    <span class="badge" id="levelBadge">關卡 1</span>
-                    <span class="badge score-badge" id="scoreBadge">得分: 0 / 100</span>
+
+                <!-- Chapters Section Hierarchy -->
+                <div id="chaptersContainer">
+                    <!-- Populated dynamically via JS -->
                 </div>
-                
-                <div class="progress-container">
-                    <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <!-- VIEW 2: Quiz Gameplay Arena -->
+            <div id="gameArenaView" class="game-arena">
+                <div class="quiz-top-bar">
+                    <div>
+                        <button onclick="exitToLevelSelect()" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.82rem;">⬅️ 放棄返回</button>
+                    </div>
+                    <div style="font-weight: 800; font-size: 1.05rem; color: var(--primary);" id="gameLevelHeaderTitle">第 1 關</div>
+                    <div>
+                        <button onclick="openReportModal()" class="btn btn-warning" style="padding: 6px 12px; font-size: 0.82rem;">⚠️ 問題回報</button>
+                    </div>
+                </div>
+
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="progressBar"></div>
                 </div>
 
                 <div class="question-box">
-                    <div class="q-text" id="questionText">問題載入中...</div>
+                    <span class="question-badge" id="qBadge">第 1 / 20 題</span>
+                    <div class="question-text" id="questionText">題目載入中...</div>
+                    <button id="ttsButton" class="audio-play-btn" style="display: none;" onclick="playQuestionTTS()">🔊 播放題目語音</button>
                 </div>
 
                 <div class="choices-grid" id="choicesGrid">
-                    <!-- Choices -->
+                    <!-- 4 Option Choices -->
                 </div>
             </div>
 
-            <!-- Screen 3: Result Screen -->
-            <div id="resultScreen" style="display: none;">
-                <h1 id="resultTitle">挑戰完成！</h1>
-                <div class="subtitle" id="resultSubtitle">關卡</div>
-                
-                <div class="result-circle" id="resultCircle">
-                    <span class="result-score" id="finalScore">0</span>
-                    <span style="font-size:0.8rem; color:var(--text-muted);">Points</span>
+            <!-- VIEW 3: Result Summary -->
+            <div id="resultView" class="result-view">
+                <div class="score-circle">
+                    <div class="score-num" id="finalScore">0</div>
+                    <div class="score-label">滿分 100</div>
+                </div>
+                <h2 style="font-weight: 900; margin-bottom: 8px;" id="resultHeadline">測驗完成！</h2>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px;" id="resultSubtext">過關標準為 85 分</p>
+
+                <div style="display: flex; justify-content: center; gap: 14px; margin-bottom: 25px;">
+                    <button onclick="restartLevel()" class="btn btn-outline">🔄 再次挑戰</button>
+                    <button id="nextLevelBtn" onclick="goToNextLevel()" class="btn" style="background: var(--success);">⭐ 前往下一關</button>
+                    <button onclick="exitToLevelSelect()" class="btn">🗺️ 回關卡地圖</button>
                 </div>
 
-                <div class="result-comment" id="resultComment">恭喜過關！</div>
-                
-                <button class="action-btn" id="nextLevelBtn">挑戰下一關</button>
-                <button class="action-btn action-btn-outline" onclick="showLevelScreen()">返回關卡選單</button>
-
-                <!-- Wrong Questions Explanations Review -->
-                <div class="wrong-review-container" id="wrongReviewContainer" style="display: none;">
-                    <h3 style="font-size: 1.05rem; font-weight: 800; color: #fca5a5; margin-bottom: 15px;">錯題解析與複習：</h3>
-                    <div id="wrongReviewList">
-                        <!-- Wrong items -->
+                <!-- Wrong Questions Review List -->
+                <div id="wrongQuestionsSection" class="wrong-section" style="display: none;">
+                    <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 16px; color: var(--warning); display: flex; align-items: center; gap: 8px;">
+                        <span>💡</span> 本次錯題精闢解析與複習
+                    </h3>
+                    <div id="wrongQuestionsList">
+                        <!-- Populated by JS -->
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
-    <!-- Report Modal -->
+    <!-- Issue Reporting Modal -->
     <div id="reportModal" class="modal" style="display: none;">
         <div class="modal-content">
-            <h3 style="margin-bottom: 10px; font-weight: 700; color: #fbbf24;">🚩 題目問題回報</h3>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">若您發現此題有錯字、選項錯誤、答案不對等問題，請詳細說明以利管理員儘速核正：</p>
+            <h3 style="font-weight: 800; margin-bottom: 10px; color: var(--text-main); text-align: center;">🚨 題目問題回報</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 18px; text-align: center;">發現題目有錯字、答案爭議或語音問題嗎？請描述給老師知道：</p>
             
-            <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--card-border); padding: 12px; border-radius: 12px; font-size: 0.85rem; margin-bottom: 15px; text-align: left; max-height: 100px; overflow-y: auto;">
-                <strong style="color: #a5b4fc;">當前題目：</strong>
-                <div id="reportQuestionPreview" style="color: white; margin-top: 4px;"></div>
+            <div style="background: var(--surface-hover); border: 1px solid var(--card-border); padding: 12px; border-radius: 12px; font-size: 0.88rem; margin-bottom: 15px; color: var(--text-muted);" id="reportPreview">
+                當前題目預覽...
             </div>
 
-            <textarea id="reportDesc" class="textarea-control" placeholder="請描述題目或答案哪裡有問題..."></textarea>
+            <textarea id="reportDesc" class="form-control" style="width: 100%; height: 100px; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 12px; color: var(--text-main); padding: 12px; font-size: 0.9rem; margin-bottom: 18px; resize: none;" placeholder="請詳述問題原因（例如：答案應該是B、題目少了一個字...）"></textarea>
 
             <div style="display: flex; gap: 12px;">
-                <button onclick="closeReportModal()" class="btn" style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text-main); box-shadow: none;">取消</button>
-                <button onclick="submitReport()" class="btn" style="flex: 1; background: var(--primary);">送出回報</button>
+                <button onclick="closeReportModal()" class="btn btn-outline" style="flex: 1;">取消</button>
+                <button onclick="submitIssueReport()" class="btn" style="flex: 1; background: var(--warning); color: #000;">確認送出回報</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Setup login guards
-        const username = localStorage.getItem("game_username");
-        const name = localStorage.getItem("game_user_name");
-        const school = localStorage.getItem("game_user_school");
-        let unlockedLevel = parseInt(localStorage.getItem("game_unlocked_level")) || 1;
-
-        if (!username || !name || !school) {
-            window.location.href = "index.html";
-        } else {
-            document.getElementById("userSchoolLabel").innerText = school;
-            document.getElementById("userNameLabel").innerText = `${name} (${username})`;
+        // Theme Management
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('game_theme', theme);
+            document.querySelectorAll('.theme-dot').forEach(dot => dot.classList.remove('active'));
+            const activeDot = document.querySelector(`.dot-${theme}`);
+            if (activeDot) activeDot.classList.add('active');
         }
 
-        // Initialize Firebase
+        (function() {
+            const savedTheme = localStorage.getItem('game_theme') || 'midnight';
+            setTheme(savedTheme);
+        })();
+
+        // ======= Firebase Configuration =======
+        const firebaseConfig = {
+            apiKey: "AIzaSyB8NyckuEi1iN2VHsNYhXsWMTq0Ily4bEM",
+            authDomain: "hospitality-quiz.firebaseapp.com",
+            databaseURL: "https://hospitality-quiz-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "hospitality-quiz",
+            storageBucket: "hospitality-quiz.firebasestorage.app",
+            messagingSenderId: "953888535734",
+            appId: "1:953888535734:web:00bf350c2f082dcabce217",
+            measurementId: "G-GZY13ZLWXV"
+        };
+        // ======================================
+
         let db = null;
+        let currentUser = {
+            username: localStorage.getItem("game_username"),
+            name: localStorage.getItem("game_user_name"),
+            school: localStorage.getItem("game_user_school"),
+            unlockedLevel: parseInt(localStorage.getItem("game_unlocked_level") || "1")
+        };
+
+        if (!currentUser.username) {
+            window.location.href = "index.html";
+        }
+
         try {
             firebase.initializeApp(firebaseConfig);
             db = firebase.database();
             
-            // Sync unlocked level with Firebase real-time
-            db.ref(`users/${username}`).on('value', snapshot => {
-                const user = snapshot.val();
-                if (user && user.unlocked_level) {
-                    unlockedLevel = user.unlocked_level;
-                    localStorage.setItem("game_unlocked_level", unlockedLevel);
-                    // Update level view if not currently in game
-                    if (document.getElementById("levelScreen").style.display !== "none") {
-                        renderLevels();
-                    }
+            // Realtime sync user unlock progress
+            db.ref(`users/${currentUser.username}`).on('value', snapshot => {
+                const data = snapshot.val();
+                if (data && data.unlocked_level) {
+                    currentUser.unlockedLevel = data.unlocked_level;
+                    localStorage.setItem("game_unlocked_level", data.unlocked_level);
+                    renderChapterGrid();
                 }
             });
         } catch (e) {
-            console.error("Firebase init failed", e);
+            console.error("Firebase sync error", e);
         }
 
-        // Global Game States
-        let currentLevel = null;
-        let currentQuestionIdx = 0;
+        document.getElementById("displayStudentName").innerText = currentUser.name || currentUser.username;
+        document.getElementById("displayStudentSchool").innerText = currentUser.school || "全國高中職";
+        document.getElementById("avatarLetter").innerText = (currentUser.name ? currentUser.name[0] : "U");
+
+        // Game State
+        let currentMode = "reading"; // "reading" or "audio"
+        let currentLevel = 1;
+        let currentQuestionIndex = 0;
+        let currentQuestionsList = [];
         let score = 0;
-        let userChoicesDisabled = false;
-        let wrongQuestions = []; // Stores wrong Qs for explanation review
+        let wrongQuestions = [];
 
-        // Chapters Mapping for Level Selection UI
-        const chapters = [
-            { id: 1, name: "第一章：觀光餐旅業概論", range: [1, 5], summary: 42 },
-            { id: 2, name: "第二章：從業人員條件與職業道德", range: [6, 7], summary: 43 },
-            { id: 3, name: "第三章：餐飲業概論", range: [8, 23], summary: 44 },
-            { id: 4, name: "第四章：旅館業概論", range: [24, 36], summary: 45 },
-            { id: 5, name: "第五章：旅行業概論", range: [37, 41], summary: 46 },
-            { id: 6, name: "學科總模擬測驗 (模擬考 1~5 回)", range: [47, 51] }
-        ];
+        function switchMode(mode) {
+            currentMode = mode;
+            document.getElementById("modeRead").className = `mode-btn ${mode === 'reading' ? 'active' : ''}`;
+            document.getElementById("modeAudio").className = `mode-btn ${mode === 'audio' ? 'active' : ''}`;
+        }
 
-        function logout() {
-            localStorage.clear();
+        function handleLogout() {
+            localStorage.removeItem("game_username");
+            localStorage.removeItem("game_user_name");
+            localStorage.removeItem("game_user_school");
+            localStorage.removeItem("game_unlocked_level");
             window.location.href = "index.html";
         }
 
-        function confirmExit() {
-            if (confirm("您確定要暫時離開本關卡嗎？目前的答題進度將不會被儲存。")) {
-                document.getElementById("gameScreen").style.display = "none";
-                showLevelScreen();
-            }
-        }
+        // Chapter Group Definitions for UI
+        const chapterGroups = [
+            { title: "第 1 章：觀光餐旅業導論與基本概念", icon: "📖", range: [1, 9], summaryExamLevel: 42 },
+            { title: "第 2 章：觀光餐旅從業人員與職業道德", icon: "👔", range: [10, 15], summaryExamLevel: 43 },
+            { title: "第 3 章：餐飲業概論與營運管理", icon: "🍳", range: [16, 26], summaryExamLevel: 44 },
+            { title: "第 4 章：旅館業概論與客房客務", icon: "🏨", range: [27, 34], summaryExamLevel: 45 },
+            { title: "第 5 章：旅行業概論與遊程規劃", icon: "✈️", range: [35, 41], summaryExamLevel: 46 },
+            { title: "🎯 全真歷屆跨章節綜合模擬測驗", icon: "🎓", range: [47, 51], summaryExamLevel: null }
+        ];
 
-        function showLevelScreen() {
-            document.getElementById("levelScreen").style.display = "block";
-            document.getElementById("gameScreen").style.display = "none";
-            document.getElementById("resultScreen").style.display = "none";
-            renderLevels();
-        }
+        function renderChapterGrid() {
+            const container = document.getElementById("chaptersContainer");
+            container.innerHTML = "";
 
-        function renderLevels() {
-            const grid = document.getElementById("levelGrid");
-            grid.innerHTML = "";
+            chapterGroups.forEach((grp, gIdx) => {
+                const groupDiv = document.createElement("div");
+                groupDiv.className = "chapter-group";
 
-            chapters.forEach(ch => {
-                // Add Chapter Header
                 const header = document.createElement("div");
                 header.className = "chapter-header";
-                header.innerHTML = `<span>${ch.name}</span>`;
-                grid.appendChild(header);
+                header.innerHTML = `<h4><span>${grp.icon}</span> ${grp.title}</h4>`;
+                groupDiv.appendChild(header);
 
-                // Add section levels
-                const [start, end] = ch.range;
-                for (let lvl = start; lvl <= end; lvl++) {
-                    createLevelCard(lvl, grid);
+                const grid = document.createElement("div");
+                grid.className = "level-grid";
+
+                // Section Levels
+                for (let l = grp.range[0]; l <= grp.range[1]; l++) {
+                    const card = document.createElement("div");
+                    const isLocked = (l > currentUser.unlockedLevel);
+                    const isPassed = (l < currentUser.unlockedLevel);
+                    const isMock = (l >= 47);
+
+                    card.className = `level-card ${isLocked ? 'locked' : ''} ${isPassed ? 'passed' : ''} ${isMock ? 'mock-exam' : ''}`;
+                    
+                    const qData = GAME_QUESTIONS_DATABASE.find(item => item.level === l);
+                    const titleText = qData ? qData.title : `第 ${l} 關`;
+
+                    card.innerHTML = `
+                        <div class="level-number">${isLocked ? '🔒' : (isMock ? '📝' : l)}</div>
+                        <div class="level-title">${titleText}</div>
+                    `;
+
+                    if (!isLocked) {
+                        card.onclick = () => startLevel(l);
+                    }
+                    grid.appendChild(card);
                 }
 
-                // Add Chapter Summary Exam if present
-                if (ch.summary) {
-                    createLevelCard(ch.summary, grid, true);
+                // Add Summary Exam card if applicable
+                if (grp.summaryExamLevel) {
+                    const sumLevel = grp.summaryExamLevel;
+                    const isLocked = (sumLevel > currentUser.unlockedLevel);
+                    const isPassed = (sumLevel < currentUser.unlockedLevel);
+
+                    const sumCard = document.createElement("div");
+                    sumCard.className = `level-card summary-exam ${isLocked ? 'locked' : ''} ${isPassed ? 'passed' : ''}`;
+                    
+                    const sumData = GAME_QUESTIONS_DATABASE.find(item => item.level === sumLevel);
+                    const sumTitle = sumData ? sumData.title : `第 ${gIdx + 1} 章總測驗`;
+
+                    sumCard.innerHTML = `
+                        <div class="level-number" style="color: var(--warning);">${isLocked ? '🔒' : '🏆'}</div>
+                        <div class="level-title" style="font-weight:bold; color: var(--warning);">${sumTitle}</div>
+                    `;
+
+                    if (!isLocked) {
+                        sumCard.onclick = () => startLevel(sumLevel);
+                    }
+                    grid.appendChild(sumCard);
                 }
+
+                groupDiv.appendChild(grid);
+                container.appendChild(groupDiv);
             });
         }
 
-        function createLevelCard(lvl, grid, isSummary = false) {
-            const data = levels[lvl];
-            if (!data) return;
+        renderChapterGrid();
 
-            const isLocked = lvl > unlockedLevel;
-            const card = document.createElement("div");
-            card.className = `level-card ${isLocked ? 'locked' : ''} ${isSummary ? 'summary-card' : ''}`;
-            
-            if (!isLocked) {
-                card.onclick = () => startLevel(lvl);
-            }
-
-            // Summary Exams styling
-            let badgeStyle = isSummary ? "background: rgba(251, 191, 36, 0.15); color: #fbbf24; border-color: rgba(251, 191, 36, 0.3);" : "";
-            if (lvl >= 47) {
-                // Mock exams
-                badgeStyle = "background: rgba(16, 185, 129, 0.15); color: #a7f3d0; border-color: rgba(16, 185, 129, 0.3);";
-            }
-
-            card.innerHTML = `
-                <div>
-                    <div class="level-name" style="${isSummary ? 'color: #fbbf24;' : ''}">${data.title}</div>
-                    <div class="level-meta">包含 20 題 • 範圍: ${data.pages} ${isLocked ? ' (🔒 需前一關達 85 分以上)' : ''}</div>
-                </div>
-                ${isLocked ? '<div style="font-size: 1.3rem;">🔒</div>' : `<button class="level-btn" style="${badgeStyle}">挑戰</button>`}
-            `;
-            grid.appendChild(card);
-        }
-
-        function startLevel(lvlId) {
-            currentLevel = lvlId;
-            currentQuestionIdx = 0;
+        // Start Level
+        function startLevel(lvl) {
+            currentLevel = lvl;
+            currentQuestionIndex = 0;
             score = 0;
-            userChoicesDisabled = false;
             wrongQuestions = [];
 
-            document.getElementById("levelScreen").style.display = "none";
-            document.getElementById("gameScreen").style.display = "block";
-            document.getElementById("resultScreen").style.display = "none";
+            const lvlData = GAME_QUESTIONS_DATABASE.find(item => item.level === lvl);
+            if (!lvlData || !lvlData.questions) {
+                alert("關卡題庫載入失敗！");
+                return;
+            }
 
-            document.getElementById("levelBadge").innerText = levels[lvlId].title;
-            updateScoreBadge();
-            showQuestion();
+            // Clone questions array
+            currentQuestionsList = [...lvlData.questions];
+
+            document.getElementById("levelSelectView").style.display = "none";
+            document.getElementById("resultView").style.display = "none";
+            document.getElementById("gameArenaView").style.display = "block";
+
+            document.getElementById("gameLevelHeaderTitle").innerText = lvlData.title;
+
+            renderQuestion();
         }
 
-        function updateScoreBadge() {
-            document.getElementById("scoreBadge").innerText = `得分: ${score} / 100`;
-        }
+        function renderQuestion() {
+            const q = currentQuestionsList[currentQuestionIndex];
+            const total = currentQuestionsList.length;
 
-        function showQuestion() {
-            userChoicesDisabled = false;
-            const lvl = levels[currentLevel];
-            const q = lvl.questions[currentQuestionIdx];
+            document.getElementById("qBadge").innerText = `第 ${currentQuestionIndex + 1} / ${total} 題`;
+            document.getElementById("progressBar").style.width = `${((currentQuestionIndex) / total) * 100}%`;
 
-            // Progress bar
-            const progPct = (currentQuestionIdx / lvl.questions.length) * 100;
-            document.getElementById("progressBar").style.width = `${progPct}%`;
+            const qTextNode = document.getElementById("questionText");
+            const ttsBtn = document.getElementById("ttsButton");
 
-            // Display question
-            document.getElementById("questionText").innerText = `${currentQuestionIdx + 1}. ${q.question}`;
+            if (currentMode === "audio") {
+                qTextNode.innerText = "🎧 請聽題目語音作答：";
+                ttsBtn.style.display = "inline-flex";
+                playQuestionTTS();
+            } else {
+                qTextNode.innerText = q.q;
+                ttsBtn.style.display = "none";
+            }
 
-            // Render choices
-            const grid = document.getElementById("choicesGrid");
-            grid.innerHTML = "";
+            const choicesGrid = document.getElementById("choicesGrid");
+            choicesGrid.innerHTML = "";
 
-            const indexLetters = ["A", "B", "C", "D"];
-            q.choices.forEach((choice, index) => {
+            const keys = ["A", "B", "C", "D"];
+            q.options.forEach((opt, idx) => {
                 const btn = document.createElement("button");
                 btn.className = "choice-btn";
-                btn.onclick = () => selectChoice(indexLetters[index], btn);
-                btn.innerHTML = `
-                    <span class="choice-index">${indexLetters[index]}</span>
-                    <span class="choice-text">${choice}</span>
-                `;
-                grid.appendChild(btn);
+                btn.innerHTML = `<span class="choice-key">${keys[idx]}</span> <span>${opt}</span>`;
+                btn.onclick = () => selectAnswer(keys[idx], btn);
+                choicesGrid.appendChild(btn);
             });
         }
 
-        function selectChoice(selectedLetter, selectedBtn) {
-            if (userChoicesDisabled) return;
-            userChoicesDisabled = true;
+        function playQuestionTTS() {
+            const q = currentQuestionsList[currentQuestionIndex];
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(q.q);
+                utterance.lang = 'zh-TW';
+                utterance.rate = 0.95;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
 
-            const lvl = levels[currentLevel];
-            const q = lvl.questions[currentQuestionIdx];
-            const isCorrect = (selectedLetter === q.answer);
+        function selectAnswer(selectedKey, btnElem) {
+            const q = currentQuestionsList[currentQuestionIndex];
+            const isCorrect = (selectedKey.toUpperCase() === q.ans.toUpperCase());
 
-            const buttons = document.querySelectorAll(".choice-btn");
-            buttons.forEach(btn => btn.classList.add("disabled"));
-
-            const card = document.getElementById("gameCard");
+            // Disable buttons temporarily
+            const allBtns = document.querySelectorAll(".choice-btn");
+            allBtns.forEach(b => b.disabled = true);
 
             if (isCorrect) {
-                score += 5;
-                selectedBtn.classList.add("correct");
-                selectedBtn.classList.add("bounce");
-                updateScoreBadge();
+                score += 5; // 20 questions = 100 points
+                btnElem.style.background = "rgba(16, 185, 129, 0.2)";
+                btnElem.style.borderColor = "var(--success)";
             } else {
-                selectedBtn.classList.add("incorrect");
-                card.classList.add("shake");
-                setTimeout(() => card.classList.remove("shake"), 300);
-
-                // Highlight the correct one
-                buttons.forEach(btn => {
-                    const idxNode = btn.querySelector(".choice-index");
-                    if (idxNode && idxNode.innerText === q.answer) {
-                        btn.classList.add("correct");
-                    }
-                });
-
-                // Save wrong question for post-game review
+                btnElem.style.background = "rgba(239, 68, 68, 0.2)";
+                btnElem.style.borderColor = "var(--error)";
                 wrongQuestions.push({
-                    question: q.question,
-                    yourAnswer: selectedLetter,
-                    correctAnswer: q.answer,
-                    choices: q.choices,
-                    explanation: q.explanation
+                    q: q.q,
+                    options: q.options,
+                    userAns: selectedKey,
+                    correctAns: q.ans,
+                    exp: q.exp || "暫無考點解析"
                 });
             }
 
             setTimeout(() => {
-                currentQuestionIdx++;
-                if (currentQuestionIdx < lvl.questions.length) {
-                    showQuestion();
+                currentQuestionIndex++;
+                if (currentQuestionIndex < currentQuestionsList.length) {
+                    renderQuestion();
                 } else {
-                    submitScore();
+                    finishLevel();
                 }
-            }, 1500);
+            }, 300);
         }
 
-        function submitScore() {
-            if (db) {
-                // 1. Submit score log
-                db.ref("scores").push({
-                    username: username,
-                    school: school,
-                    name: name,
-                    level: currentLevel,
-                    score: score,
-                    completed_at: firebase.database.ServerValue.TIMESTAMP
-                });
+        function finishLevel() {
+            document.getElementById("gameArenaView").style.display = "none";
+            document.getElementById("resultView").style.display = "block";
 
-                // 2. Unlock next level if passed (>= 85)
-                if (score >= 85 && currentLevel === unlockedLevel) {
-                    const newUnlocked = unlockedLevel + 1;
-                    db.ref(`users/${username}`).update({
-                        unlocked_level: newUnlocked
-                    })
-                    .then(() => {
-                        unlockedLevel = newUnlocked;
-                        localStorage.setItem("game_unlocked_level", unlockedLevel);
-                        showResults(true);
-                    });
-                } else {
-                    showResults(score >= 85);
-                }
-            } else {
-                // Offline mode fallback
-                if (score >= 85 && currentLevel === unlockedLevel) {
-                    unlockedLevel++;
-                    localStorage.setItem("game_unlocked_level", unlockedLevel);
-                }
-                showResults(score >= 85);
-            }
-        }
-
-        function showResults(isPassed) {
-            document.getElementById("gameScreen").style.display = "none";
-            document.getElementById("resultScreen").style.display = "block";
-
-            document.getElementById("resultSubtitle").innerText = levels[currentLevel].title;
             document.getElementById("finalScore").innerText = score;
+            const isPassed = (score >= 85);
 
-            const circle = document.getElementById("resultCircle");
-            const commentNode = document.getElementById("resultComment");
+            const headline = document.getElementById("resultHeadline");
+            const subtext = document.getElementById("resultSubtext");
             const nextBtn = document.getElementById("nextLevelBtn");
 
             if (isPassed) {
-                circle.className = "result-circle pass";
-                document.getElementById("resultTitle").innerText = "挑戰成功！";
-                commentNode.innerText = "恭喜通過本關卡！已成功解鎖下一關！";
-                commentNode.style.color = "var(--success)";
-                
-                const totalLevels = Object.keys(levels).length;
-                if (currentLevel < totalLevels) {
-                    nextBtn.style.display = "block";
-                    nextBtn.innerText = `挑戰第 ${currentLevel + 1} 關`;
-                    nextBtn.onclick = () => startLevel(currentLevel + 1);
-                } else {
-                    nextBtn.style.display = "none";
+                headline.innerText = "🎉 恭喜通關！";
+                headline.style.color = "var(--success)";
+                subtext.innerText = `獲得 ${score} 分，順利解鎖下一關！`;
+                nextBtn.style.display = "inline-flex";
+
+                // Update unlocked level if new record
+                if (currentLevel >= currentUser.unlockedLevel && currentUser.unlockedLevel < 51) {
+                    const nextUnlock = currentLevel + 1;
+                    currentUser.unlockedLevel = nextUnlock;
+                    localStorage.setItem("game_unlocked_level", nextUnlock);
+                    if (db) {
+                        db.ref(`users/${currentUser.username}/unlocked_level`).set(nextUnlock);
+                    }
                 }
             } else {
-                circle.className = "result-circle fail";
-                document.getElementById("resultTitle").innerText = "挑戰失敗！";
-                commentNode.innerText = "未達 85 分，無法通過本關。請再接再厲！";
-                commentNode.style.color = "var(--error)";
-                
-                nextBtn.style.display = "block";
-                nextBtn.innerText = "重新挑戰本關";
-                nextBtn.onclick = () => startLevel(currentLevel);
+                headline.innerText = "💪 再接再厲！";
+                headline.style.color = "var(--warning)";
+                subtext.innerText = `本次得分 ${score} 分，需達 85 分才可解鎖下一關！`;
+                nextBtn.style.display = "none";
+            }
+
+            // Save Score to Firebase
+            if (db) {
+                const scoreRecord = {
+                    username: currentUser.username,
+                    name: currentUser.name,
+                    school: currentUser.school,
+                    level: currentLevel,
+                    score: score,
+                    completed_at: firebase.database.ServerValue.TIMESTAMP
+                };
+                db.ref("scores").push(scoreRecord);
             }
 
             // Render Wrong Questions Review
-            const wrongContainer = document.getElementById("wrongReviewContainer");
-            const wrongList = document.getElementById("wrongReviewList");
+            const wrongSection = document.getElementById("wrongQuestionsSection");
+            const wrongList = document.getElementById("wrongQuestionsList");
             wrongList.innerHTML = "";
 
             if (wrongQuestions.length > 0) {
-                wrongContainer.style.display = "block";
-                wrongQuestions.forEach(wq => {
-                    const item = document.createElement("div");
-                    item.className = "wrong-q-item";
+                wrongSection.style.display = "block";
+                const keys = ["A", "B", "C", "D"];
+                wrongQuestions.forEach((wq, i) => {
+                    const card = document.createElement("div");
+                    card.className = "wrong-card";
 
-                    const letters = ["A", "B", "C", "D"];
-                    const yourAnsTxt = wq.choices[letters.indexOf(wq.yourAnswer)];
-                    const correctAnsTxt = wq.choices[letters.indexOf(wq.correctAnswer)];
+                    const optStrings = wq.options.map((o, idx) => `(${keys[idx]}) ${o}`).join("　");
 
-                    item.innerHTML = `
-                        <div class="wrong-q-title">${wq.question}</div>
-                        <div class="wrong-q-detail">❌ 您的答案：(${wq.yourAnswer}) ${yourAnsTxt}</div>
-                        <div class="wrong-q-detail" style="color: var(--success)">✅ 正確答案：(${wq.correctAnswer}) ${correctAnsTxt}</div>
-                        <div class="wrong-q-explanation">
-                            <strong>📖 考點解析：</strong><br>
-                            ${wq.explanation}
+                    card.innerHTML = `
+                        <div class="wrong-q-title">${i + 1}. ${wq.q}</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">${optStrings}</div>
+                        <div class="wrong-answers-badge">
+                            <span class="badge-user-ans">您的答案：(${wq.userAns})</span>
+                            <span class="badge-correct-ans">正確答案：(${wq.correctAns})</span>
+                        </div>
+                        <div class="explanation-box">
+                            <strong style="color: var(--text-main);">💡 考點解析：</strong> ${wq.exp}
                         </div>
                     `;
-                    wrongList.appendChild(item);
+                    wrongList.appendChild(card);
                 });
             } else {
-                wrongContainer.style.display = "none";
+                wrongSection.style.display = "none";
             }
         }
 
-        // Issue Reporting Modal Controls
+        function restartLevel() {
+            startLevel(currentLevel);
+        }
+
+        function goToNextLevel() {
+            if (currentLevel < 51) {
+                startLevel(currentLevel + 1);
+            } else {
+                exitToLevelSelect();
+            }
+        }
+
+        function exitToLevelSelect() {
+            document.getElementById("gameArenaView").style.display = "none";
+            document.getElementById("resultView").style.display = "none";
+            document.getElementById("levelSelectView").style.display = "block";
+            renderChapterGrid();
+        }
+
+        // Report Issue Modal
         function openReportModal() {
-            const q = levels[currentLevel].questions[currentQuestionIdx];
-            document.getElementById("reportQuestionPreview").innerText = q.question;
+            const q = currentQuestionsList[currentQuestionIndex];
+            document.getElementById("reportPreview").innerText = `題目：${q.q}`;
             document.getElementById("reportDesc").value = "";
             document.getElementById("reportModal").style.display = "flex";
         }
@@ -910,44 +1105,39 @@
             document.getElementById("reportModal").style.display = "none";
         }
 
-        function submitReport() {
+        function submitIssueReport() {
             const desc = document.getElementById("reportDesc").value.trim();
             if (!desc) {
-                alert("請填寫回報內容！");
+                alert("請填寫問題原因說明！");
                 return;
             }
 
+            const q = currentQuestionsList[currentQuestionIndex];
+            const reportData = {
+                username: currentUser.username,
+                name: currentUser.name,
+                school: currentUser.school,
+                level: currentLevel,
+                level_title: document.getElementById("gameLevelHeaderTitle").innerText,
+                question: q.q,
+                choices: q.options,
+                answer: q.ans,
+                error_desc: desc,
+                reported_at: firebase.database.ServerValue.TIMESTAMP
+            };
+
             if (db) {
-                const q = levels[currentLevel].questions[currentQuestionIdx];
-                db.ref("reports").push({
-                    username: username,
-                    school: school,
-                    name: name,
-                    level: currentLevel,
-                    level_title: levels[currentLevel].title,
-                    question: q.question,
-                    choices: q.choices,
-                    answer: q.answer,
-                    error_desc: desc,
-                    reported_at: firebase.database.ServerValue.TIMESTAMP
-                })
+                db.ref("reports").push(reportData)
                 .then(() => {
-                    alert("回報成功！感謝您的協助，管理員會盡快處理。");
+                    alert("感謝您的回報！老師將會在後台儘速審核修正。");
                     closeReportModal();
                 })
                 .catch(err => {
                     console.error("Report submit failed", err);
-                    alert("寫入資料庫失敗，請重試！");
+                    alert("回報送出失敗，請檢查網路連線！");
                 });
-            } else {
-                alert("目前處於離線狀態，無法送出回報！");
             }
         }
-
-        // On Load Show Levels
-        window.onload = () => {
-            showLevelScreen();
-        };
     </script>
 </body>
 </html>

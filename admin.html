@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>餐旅概論雲端檢測系統 - 教師後台</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>餐旅概論雲端檢測系統 - 教師管理後台</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <!-- Load Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -14,17 +14,90 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     
     <style>
-        :root {
-            --bg-color: #0b0f19;
-            --card-bg: rgba(255, 255, 255, 0.04);
-            --card-border: rgba(255, 255, 255, 0.08);
-            --primary: #4f46e5;
-            --primary-glow: rgba(79, 70, 229, 0.4);
+        /* ================= THEME DEFINITIONS ================= */
+        :root, [data-theme="midnight"] {
+            --bg-gradient: radial-gradient(circle at 50% 15%, #1e1b4b 0%, #0b0f19 85%);
+            --card-bg: rgba(22, 27, 46, 0.65);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-glow: rgba(99, 102, 241, 0.35);
             --success: #10b981;
             --error: #ef4444;
             --warning: #fbbf24;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --surface-hover: rgba(255, 255, 255, 0.05);
+            --input-bg: rgba(11, 15, 25, 0.7);
+            --table-header: rgba(255, 255, 255, 0.05);
+        }
+
+        [data-theme="ocean"] {
+            --bg-gradient: radial-gradient(circle at 50% 15%, #0c3359 0%, #051324 85%);
+            --card-bg: rgba(12, 38, 66, 0.65);
+            --card-border: rgba(56, 189, 248, 0.15);
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --primary-glow: rgba(2, 132, 199, 0.35);
+            --success: #06b6d4;
+            --error: #f43f5e;
+            --warning: #facc15;
+            --text-main: #f0f9ff;
+            --text-muted: #7dd3fc;
+            --surface-hover: rgba(56, 189, 248, 0.08);
+            --input-bg: rgba(5, 19, 36, 0.7);
+            --table-header: rgba(56, 189, 248, 0.08);
+        }
+
+        [data-theme="forest"] {
+            --bg-gradient: radial-gradient(circle at 50% 15%, #064e3b 0%, #02241b 85%);
+            --card-bg: rgba(6, 60, 46, 0.65);
+            --card-border: rgba(52, 211, 153, 0.15);
+            --primary: #059669;
+            --primary-hover: #047857;
+            --primary-glow: rgba(5, 150, 105, 0.35);
+            --success: #34d399;
+            --error: #fb7185;
+            --warning: #fde047;
+            --text-main: #ecfdf5;
+            --text-muted: #6ee7b7;
+            --surface-hover: rgba(52, 211, 153, 0.08);
+            --input-bg: rgba(2, 36, 27, 0.7);
+            --table-header: rgba(52, 211, 153, 0.08);
+        }
+
+        [data-theme="sunset"] {
+            --bg-gradient: radial-gradient(circle at 50% 15%, #4a044e 0%, #1a0320 85%);
+            --card-bg: rgba(58, 6, 61, 0.65);
+            --card-border: rgba(244, 114, 182, 0.15);
+            --primary: #c026d3;
+            --primary-hover: #a21caf;
+            --primary-glow: rgba(192, 38, 211, 0.35);
+            --success: #10b981;
+            --error: #f43f5e;
+            --warning: #fbbf24;
+            --text-main: #fdf4ff;
+            --text-muted: #f0abfc;
+            --surface-hover: rgba(244, 114, 182, 0.08);
+            --input-bg: rgba(26, 3, 32, 0.7);
+            --table-header: rgba(244, 114, 182, 0.08);
+        }
+
+        [data-theme="light"] {
+            --bg-gradient: radial-gradient(circle at 50% 15%, #e2e8f0 0%, #f8fafc 85%);
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --card-border: rgba(99, 102, 241, 0.2);
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-glow: rgba(79, 70, 229, 0.25);
+            --success: #059669;
+            --error: #dc2626;
+            --warning: #d97706;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --surface-hover: rgba(79, 70, 229, 0.06);
+            --input-bg: #ffffff;
+            --table-header: rgba(79, 70, 229, 0.08);
         }
 
         * {
@@ -32,14 +105,51 @@
             margin: 0;
             padding: 0;
             font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         body {
-            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, var(--bg-color) 80%);
+            background: var(--bg-gradient);
             color: var(--text-main);
             min-height: 100vh;
-            padding: 40px 20px;
+            padding: 35px 20px;
         }
+
+        /* Theme Switcher Bar */
+        .theme-bar {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 5px 12px;
+            border-radius: 30px;
+            backdrop-filter: blur(16px);
+            z-index: 100;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+        }
+
+        .theme-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s ease;
+        }
+
+        .theme-dot:hover { transform: scale(1.15); }
+        .theme-dot.active { border-color: #ffffff; transform: scale(1.1); box-shadow: 0 0 8px rgba(255,255,255,0.6); }
+
+        .dot-midnight { background: linear-gradient(135deg, #1e1b4b, #6366f1); }
+        .dot-ocean { background: linear-gradient(135deg, #0c3359, #0284c7); }
+        .dot-forest { background: linear-gradient(135deg, #064e3b, #10b981); }
+        .dot-sunset { background: linear-gradient(135deg, #4a044e, #c026d3); }
+        .dot-light { background: linear-gradient(135deg, #ffffff, #94a3b8); border: 1px solid #cbd5e1; }
 
         .container {
             width: 100%;
@@ -50,77 +160,111 @@
         .dashboard-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            backdrop-filter: blur(16px);
-            border-radius: 24px;
+            backdrop-filter: blur(24px);
+            border-radius: 28px;
             padding: 35px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 50px rgba(79, 70, 229, 0.1);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
         }
 
         h1 {
             font-size: 2rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%);
+            font-weight: 900;
+            background: linear-gradient(135deg, #a5b4fc 0%, var(--primary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
         .subtitle {
             font-size: 0.95rem;
             color: var(--text-muted);
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--surface-hover);
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: var(--primary-glow);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .stat-val { font-size: 1.6rem; font-weight: 900; color: var(--text-main); }
+        .stat-lbl { font-size: 0.8rem; color: var(--text-muted); font-weight: 700; }
 
         .controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 14px;
         }
 
         .tabs {
             display: flex;
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--surface-hover);
             padding: 4px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            border: 1px solid var(--card-border);
         }
 
         .tab-btn {
             background: transparent;
             border: none;
             color: var(--text-muted);
-            padding: 10px 20px;
+            padding: 9px 18px;
             border-radius: 10px;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 0.95rem;
+            font-weight: 700;
+            font-size: 0.9rem;
             transition: all 0.2s;
         }
 
         .tab-btn.active {
             background: var(--primary);
             color: white;
-            box-shadow: 0 4px 10px var(--primary-glow);
+            box-shadow: 0 3px 10px var(--primary-glow);
         }
 
         .search-box {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
             border-radius: 12px;
-            padding: 10px 18px;
-            color: white;
-            font-size: 0.95rem;
-            width: 250px;
+            padding: 10px 16px;
+            color: var(--text-main);
+            font-size: 0.92rem;
+            width: 240px;
             outline: none;
             transition: all 0.2s;
         }
 
         .search-box:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
+            box-shadow: 0 0 12px var(--primary-glow);
         }
 
         .btn {
@@ -129,29 +273,27 @@
             color: white;
             padding: 10px 18px;
             border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.95rem;
+            font-weight: 700;
+            font-size: 0.92rem;
             cursor: pointer;
             transition: all 0.2s;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 6px;
+            text-decoration: none;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px var(--primary-glow); }
         .btn-success { background: var(--success); }
         .btn-error { background: var(--error); }
-        .btn-warning { background: var(--warning); color: #000; }
+        .btn-outline { background: var(--surface-hover); border: 1px solid var(--card-border); color: var(--text-main); }
 
         .table-responsive {
             width: 100%;
             overflow-x: auto;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            background: rgba(0, 0, 0, 0.2);
+            border-radius: 18px;
+            border: 1px solid var(--card-border);
+            background: var(--surface-hover);
             margin-bottom: 20px;
         }
 
@@ -162,32 +304,30 @@
         }
 
         th {
-            background: rgba(255, 255, 255, 0.04);
-            color: #c7d2fe;
+            background: var(--table-header);
+            color: var(--text-muted);
             font-weight: 700;
-            padding: 16px 20px;
-            font-size: 0.95rem;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+            padding: 14px 18px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--card-border);
         }
 
         td {
-            padding: 14px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 0.95rem;
+            padding: 13px 18px;
+            border-bottom: 1px solid var(--card-border);
+            font-size: 0.9rem;
         }
 
-        tr:hover {
-            background: rgba(255, 255, 255, 0.02);
-        }
+        tr:hover { background: var(--surface-hover); }
 
         .progress-badge {
-            background: rgba(79, 70, 229, 0.15);
-            border: 1px solid rgba(79, 70, 229, 0.3);
-            color: #a5b4fc;
-            padding: 4px 10px;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid var(--primary-glow);
+            color: var(--primary);
+            padding: 3px 10px;
             border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.85rem;
+            font-weight: 700;
+            font-size: 0.82rem;
             display: inline-block;
         }
 
@@ -199,40 +339,70 @@
         }
 
         .report-card {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            padding: 20px;
+            background: var(--surface-hover);
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
+            padding: 22px;
         }
 
         .report-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            padding-bottom: 10px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 12px;
             margin-bottom: 15px;
             flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .report-body {
-            font-size: 0.95rem;
-            line-height: 1.5;
-            display: flex;
-            flex-direction: column;
             gap: 10px;
         }
     </style>
 </head>
 <body>
+    <!-- Theme Switcher -->
+    <div class="theme-bar">
+        <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted);">🎨 底色：</span>
+        <div class="theme-dot dot-midnight" title="星空暗夜" onclick="setTheme('midnight')"></div>
+        <div class="theme-dot dot-ocean" title="沉靜湛藍" onclick="setTheme('ocean')"></div>
+        <div class="theme-dot dot-forest" title="森林翡翠" onclick="setTheme('forest')"></div>
+        <div class="theme-dot dot-sunset" title="暮光幻紫" onclick="setTheme('sunset')"></div>
+        <div class="theme-dot dot-light" title="晨曦明亮" onclick="setTheme('light')"></div>
+    </div>
+
     <div class="container">
         <div class="dashboard-card">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 5px;">
                 <h1>餐旅概論雲端檢測系統 - 教師後台</h1>
-                <button onclick="logoutAdmin()" class="btn btn-error" style="padding: 6px 12px; font-size: 0.85rem;">退出後台</button>
+                <div style="display: flex; gap: 10px;">
+                    <a href="index.html" class="btn btn-outline">🏠 回首頁</a>
+                    <button onclick="logoutAdmin()" class="btn btn-error">退出後台</button>
+                </div>
             </div>
-            <div class="subtitle">即時查看學生通關分數、管理問題回報與資料匯出</div>
+            <div class="subtitle">即時掌握全台學生通關進度、管理題目爭議回報與匯出 Excel 成績報表</div>
+
+            <!-- Stats Overview Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div>
+                        <div class="stat-val" id="statStudents">0</div>
+                        <div class="stat-lbl">已註冊學生總數</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📝</div>
+                    <div>
+                        <div class="stat-val" id="statAttempts">0</div>
+                        <div class="stat-lbl">累積小考測驗次數</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚠️</div>
+                    <div>
+                        <div class="stat-val" id="statReports" style="color: var(--warning);">0</div>
+                        <div class="stat-lbl">待審查問題回報</div>
+                    </div>
+                </div>
+            </div>
 
             <div class="controls">
                 <div class="tabs">
@@ -242,7 +412,7 @@
                 
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;" id="studentControls">
                     <input type="text" class="search-box" id="searchBox" placeholder="搜尋學校或姓名..." oninput="filterData()">
-                    <button onclick="exportToExcel()" class="btn btn-success">📊 匯出 Excel</button>
+                    <button onclick="exportToExcel()" class="btn btn-success">📊 匯出 Excel 成績表</button>
                 </div>
             </div>
 
@@ -252,11 +422,11 @@
                     <table>
                         <thead>
                             <tr>
-                                <th style="width: 20%;">學校名稱</th>
-                                <th style="width: 15%;">帳號 (帳密)</th>
+                                <th style="width: 22%;">學校名稱</th>
+                                <th style="width: 18%;">帳號 (帳密備忘)</th>
                                 <th style="width: 20%;">姓名 / 暱稱</th>
-                                <th style="width: 25%;">目前解鎖進度</th>
-                                <th style="width: 20%;">已通過關卡比例</th>
+                                <th style="width: 20%;">目前解鎖進度</th>
+                                <th style="width: 20%;">已通關比例</th>
                             </tr>
                         </thead>
                         <tbody id="studentTableBody">
@@ -279,7 +449,21 @@
     </div>
 
     <script>
-        // Verify password immediately on load
+        // Theme Management
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('game_theme', theme);
+            document.querySelectorAll('.theme-dot').forEach(dot => dot.classList.remove('active'));
+            const activeDot = document.querySelector(`.dot-${theme}`);
+            if (activeDot) activeDot.classList.add('active');
+        }
+
+        (function() {
+            const savedTheme = localStorage.getItem('game_theme') || 'midnight';
+            setTheme(savedTheme);
+        })();
+
+        // Password verification on entry
         (function() {
             const auth = localStorage.getItem("teacher_authenticated");
             if (auth !== "true") {
@@ -299,7 +483,7 @@
             window.location.href = "index.html";
         }
 
-        // Firebase Configuration
+        // ======= Firebase Configuration =======
         const firebaseConfig = {
             apiKey: "AIzaSyB8NyckuEi1iN2VHsNYhXsWMTq0Ily4bEM",
             authDomain: "hospitality-quiz.firebaseapp.com",
@@ -310,6 +494,7 @@
             appId: "1:953888535734:web:00bf350c2f082dcabce217",
             measurementId: "G-GZY13ZLWXV"
         };
+        // ======================================
 
         let db = null;
         let activeSection = "students";
@@ -321,13 +506,17 @@
             firebase.initializeApp(firebaseConfig);
             db = firebase.database();
             
-            // Sync Database Realtime
             db.ref().on('value', (snapshot) => {
                 const data = snapshot.val() || {};
                 rawUsers = data.users || {};
                 rawScores = data.scores || {};
                 rawReports = data.reports || {};
                 
+                // Update stats
+                document.getElementById("statStudents").innerText = Object.keys(rawUsers).length;
+                document.getElementById("statAttempts").innerText = Object.keys(rawScores).length;
+                document.getElementById("statReports").innerText = Object.keys(rawReports).length;
+
                 renderStudentsTable();
                 renderReports();
             }, (err) => {
@@ -357,14 +546,11 @@
             renderStudentsTable();
         }
 
-        // Render Student Progress Table
         function renderStudentsTable() {
             const tbody = document.getElementById("studentTableBody");
             tbody.innerHTML = "";
 
             const searchQuery = document.getElementById("searchBox").value.trim().toLowerCase();
-
-            // Total levels in game is 51
             const TOTAL_LEVELS = 51;
 
             let rowCount = 0;
@@ -374,7 +560,6 @@
                 const school = user.school || "";
                 const unlocked = user.unlocked_level || 1;
 
-                // Search Filter
                 if (searchQuery && !name.toLowerCase().includes(searchQuery) && !school.toLowerCase().includes(searchQuery) && !uname.toLowerCase().includes(searchQuery)) {
                     continue;
                 }
@@ -387,13 +572,13 @@
 
                 tr.innerHTML = `
                     <td><b>${school}</b></td>
-                    <td><span style="font-family: monospace;">${uname}</span> <br><small style="color:var(--text-muted);">PW: ${user.password}</small></td>
+                    <td><span style="font-family: monospace;">${uname}</span> <br><small style="color:var(--text-muted);">密碼: ${user.password}</small></td>
                     <td><b>${name}</b></td>
                     <td><span class="progress-badge">已解鎖第 ${unlocked} 關</span></td>
                     <td>
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
-                                <div style="width: ${completionPct}%; height: 100%; background: linear-gradient(90deg, #10b981, #34d399); border-radius: 4px;"></div>
+                            <div style="flex: 1; height: 8px; background: var(--input-bg); border-radius: 4px; overflow: hidden; border: 1px solid var(--card-border);">
+                                <div style="width: ${completionPct}%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--success)); border-radius: 4px;"></div>
                             </div>
                             <span style="font-size: 0.85rem; font-weight: bold; min-width: 60px;">${passedCount} / ${TOTAL_LEVELS} 關</span>
                         </div>
@@ -407,7 +592,6 @@
             }
         }
 
-        // Render Issue Reports
         function renderReports() {
             const container = document.getElementById("reportsContainer");
             container.innerHTML = "";
@@ -419,12 +603,11 @@
                 reportsList.push({ id: id, ...rawReports[id] });
             }
 
-            // Sort by reported time descending
             reportsList.sort((a,b) => b.reported_at - a.reported_at);
             reportsCountNode.innerText = reportsList.length;
 
             if (reportsList.length === 0) {
-                container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 30px;">尚無回報紀錄</div>`;
+                container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 30px;">目前尚無待處理之題目回報 🎉</div>`;
                 return;
             }
 
@@ -433,33 +616,32 @@
                 card.className = "report-card";
 
                 const dateStr = new Date(rep.reported_at).toLocaleString();
-
                 const indexLetters = ["A", "B", "C", "D"];
                 const choicesText = rep.choices ? rep.choices.map((c, i) => `(${indexLetters[i]}) ${c}`).join(" ") : "";
 
                 card.innerHTML = `
                     <div class="report-header">
                         <div>
-                            <span style="background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; margin-right: 8px; font-weight: bold;">${rep.level_title}</span>
+                            <span style="background: rgba(251,191,36,0.15); color: var(--warning); border: 1px solid rgba(251,191,36,0.3); padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; margin-right: 8px; font-weight: bold;">${rep.level_title}</span>
                             <strong>${rep.school} - ${rep.name} (${rep.username})</strong>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
                             <span style="font-size: 0.8rem; color: var(--text-muted);">${dateStr}</span>
-                            <button onclick="deleteReport('${rep.id}')" class="btn btn-error" style="padding: 4px 10px; font-size: 0.75rem;">解決/刪除</button>
+                            <button onclick="deleteReport('${rep.id}')" class="btn btn-error" style="padding: 5px 12px; font-size: 0.78rem;">✓ 解決並刪除</button>
                         </div>
                     </div>
-                    <div class="report-body">
+                    <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.92rem; line-height: 1.5;">
                         <div>
-                            <strong style="color: #a5b4fc;">題目內容：</strong>
-                            <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 5px;">
+                            <strong style="color: var(--primary);">題目內容：</strong>
+                            <div style="background: var(--input-bg); border: 1px solid var(--card-border); padding: 12px; border-radius: 10px; margin-top: 5px;">
                                 <div>${rep.question}</div>
-                                <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">${choicesText}</div>
-                                <div style="color: var(--success); font-size: 0.85rem; margin-top: 4px;">正確答案標記為：(${rep.answer})</div>
+                                <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 6px;">${choicesText}</div>
+                                <div style="color: var(--success); font-size: 0.85rem; margin-top: 4px; font-weight: bold;">正確答案標記為：(${rep.answer})</div>
                             </div>
                         </div>
                         <div>
-                            <strong style="color: #fca5a5;">學生描述的問題：</strong>
-                            <div style="background: rgba(239, 68, 68, 0.08); border-left: 3px solid var(--error); padding: 10px; border-radius: 0 8px 8px 0; margin-top: 5px; color: white;">
+                            <strong style="color: var(--error);">學生描述的問題：</strong>
+                            <div style="background: rgba(239, 68, 68, 0.08); border-left: 3px solid var(--error); padding: 10px 14px; border-radius: 0 10px 10px 0; margin-top: 5px; color: var(--text-main);">
                                 ${rep.error_desc}
                             </div>
                         </div>
@@ -470,17 +652,14 @@
         }
 
         function deleteReport(reportId) {
-            if (confirm("您確定要刪除這筆回報紀錄嗎？")) {
+            if (confirm("您確定要將這筆回報標記為已處理並刪除嗎？")) {
                 if (db) {
                     db.ref(`reports/${reportId}`).remove()
-                    .catch(err => {
-                        console.error("Delete report failed", err);
-                    });
+                    .catch(err => console.error("Delete report failed", err));
                 }
             }
         }
 
-        // Export data to Excel
         function exportToExcel() {
             if (typeof XLSX === 'undefined') {
                 alert("Excel 匯出元件載入中，請稍後再試！");
@@ -493,8 +672,6 @@
             }
 
             const excelData = [];
-            
-            // Header Row
             const headers = ["學校名稱", "帳號", "姓名/暱稱", "目前解鎖進度"];
             const TOTAL_LEVELS = 51;
             for (let l = 1; l <= TOTAL_LEVELS; l++) {
@@ -502,21 +679,14 @@
             }
             excelData.push(headers);
 
-            // Populate Student Rows
             for (let uname in rawUsers) {
                 const user = rawUsers[uname];
                 const name = user.name || "";
                 const school = user.school || "";
                 const unlocked = user.unlocked_level || 1;
 
-                const row = [
-                    school,
-                    uname,
-                    name,
-                    `已解鎖第 ${unlocked} 關`
-                ];
+                const row = [school, uname, name, `已解鎖第 ${unlocked} 關`];
 
-                // Find max score for each level 1-51
                 for (let l = 1; l <= TOTAL_LEVELS; l++) {
                     const lvlScores = scoreList
                         .filter(s => s.username === uname && s.level === l)
@@ -525,7 +695,7 @@
                     if (lvlScores.length > 0) {
                         row.push(Math.max(...lvlScores));
                     } else {
-                        row.push(""); // Blank if not attempted
+                        row.push("");
                     }
                 }
                 excelData.push(row);
@@ -534,7 +704,6 @@
             const worksheet = XLSX.utils.aoa_to_sheet(excelData);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "學生最高小考成績");
-            
             XLSX.writeFile(workbook, "餐旅概論學生小考最高成績表.xlsx");
         }
     </script>

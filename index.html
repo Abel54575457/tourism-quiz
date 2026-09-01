@@ -4,24 +4,102 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>餐旅概論雲端闖關與檢測系統 - 入口</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <!-- Load Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     
     <style>
-        :root {
-            --bg-color: #0b0f19;
-            --card-bg: rgba(255, 255, 255, 0.04);
-            --card-border: rgba(255, 255, 255, 0.08);
-            --primary: #4f46e5;
-            --primary-glow: rgba(79, 70, 229, 0.4);
+        /* ================= THEME DEFINITIONS ================= */
+        :root, [data-theme="midnight"] {
+            --bg-gradient: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #0b0f19 85%);
+            --card-bg: rgba(22, 27, 46, 0.65);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-glow: rgba(99, 102, 241, 0.35);
             --success: #10b981;
             --error: #ef4444;
             --warning: #fbbf24;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --surface-hover: rgba(255, 255, 255, 0.05);
+            --input-bg: rgba(11, 15, 25, 0.7);
+            --modal-bg: #15192b;
+            --table-header: rgba(255, 255, 255, 0.05);
+        }
+
+        [data-theme="ocean"] {
+            --bg-gradient: radial-gradient(circle at 50% 20%, #0c3359 0%, #051324 85%);
+            --card-bg: rgba(12, 38, 66, 0.65);
+            --card-border: rgba(56, 189, 248, 0.15);
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --primary-glow: rgba(2, 132, 199, 0.35);
+            --success: #06b6d4;
+            --error: #f43f5e;
+            --warning: #facc15;
+            --text-main: #f0f9ff;
+            --text-muted: #7dd3fc;
+            --surface-hover: rgba(56, 189, 248, 0.08);
+            --input-bg: rgba(5, 19, 36, 0.7);
+            --modal-bg: #092038;
+            --table-header: rgba(56, 189, 248, 0.08);
+        }
+
+        [data-theme="forest"] {
+            --bg-gradient: radial-gradient(circle at 50% 20%, #064e3b 0%, #02241b 85%);
+            --card-bg: rgba(6, 60, 46, 0.65);
+            --card-border: rgba(52, 211, 153, 0.15);
+            --primary: #059669;
+            --primary-hover: #047857;
+            --primary-glow: rgba(5, 150, 105, 0.35);
+            --success: #34d399;
+            --error: #fb7185;
+            --warning: #fde047;
+            --text-main: #ecfdf5;
+            --text-muted: #6ee7b7;
+            --surface-hover: rgba(52, 211, 153, 0.08);
+            --input-bg: rgba(2, 36, 27, 0.7);
+            --modal-bg: #043629;
+            --table-header: rgba(52, 211, 153, 0.08);
+        }
+
+        [data-theme="sunset"] {
+            --bg-gradient: radial-gradient(circle at 50% 20%, #4a044e 0%, #1a0320 85%);
+            --card-bg: rgba(58, 6, 61, 0.65);
+            --card-border: rgba(244, 114, 182, 0.15);
+            --primary: #c026d3;
+            --primary-hover: #a21caf;
+            --primary-glow: rgba(192, 38, 211, 0.35);
+            --success: #10b981;
+            --error: #f43f5e;
+            --warning: #fbbf24;
+            --text-main: #fdf4ff;
+            --text-muted: #f0abfc;
+            --surface-hover: rgba(244, 114, 182, 0.08);
+            --input-bg: rgba(26, 3, 32, 0.7);
+            --modal-bg: #350438;
+            --table-header: rgba(244, 114, 182, 0.08);
+        }
+
+        [data-theme="light"] {
+            --bg-gradient: radial-gradient(circle at 50% 20%, #e2e8f0 0%, #f8fafc 85%);
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --card-border: rgba(99, 102, 241, 0.2);
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-glow: rgba(79, 70, 229, 0.25);
+            --success: #059669;
+            --error: #dc2626;
+            --warning: #d97706;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --surface-hover: rgba(79, 70, 229, 0.06);
+            --input-bg: #ffffff;
+            --modal-bg: #ffffff;
+            --table-header: rgba(79, 70, 229, 0.08);
         }
 
         * {
@@ -30,71 +108,135 @@
             padding: 0;
             font-family: 'Outfit', 'Noto Sans TC', sans-serif;
             -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         body {
-            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, var(--bg-color) 80%);
+            background: var(--bg-gradient);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 40px 20px;
+            position: relative;
         }
+
+        /* Theme Picker Bar */
+        .theme-bar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 6px 12px;
+            border-radius: 30px;
+            backdrop-filter: blur(16px);
+            z-index: 100;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+        }
+
+        .theme-dot {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .theme-dot:hover {
+            transform: scale(1.15);
+        }
+
+        .theme-dot.active {
+            border-color: #ffffff;
+            box-shadow: 0 0 8px rgba(255,255,255,0.6);
+            transform: scale(1.1);
+        }
+
+        .dot-midnight { background: linear-gradient(135deg, #1e1b4b, #6366f1); }
+        .dot-ocean { background: linear-gradient(135deg, #0c3359, #0284c7); }
+        .dot-forest { background: linear-gradient(135deg, #064e3b, #10b981); }
+        .dot-sunset { background: linear-gradient(135deg, #4a044e, #c026d3); }
+        .dot-light { background: linear-gradient(135deg, #ffffff, #94a3b8); border: 1px solid #cbd5e1; }
 
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 860px;
         }
 
         .portal-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            backdrop-filter: blur(16px);
-            border-radius: 24px;
-            padding: 35px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 50px rgba(79, 70, 229, 0.1);
+            backdrop-filter: blur(24px);
+            border-radius: 28px;
+            padding: 40px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45), 0 0 60px var(--primary-glow);
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid var(--primary-glow);
+            color: var(--primary);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            text-align: center;
         }
 
         h1 {
-            font-size: 2.2rem;
-            font-weight: 800;
+            font-size: 2.3rem;
+            font-weight: 900;
             text-align: center;
-            background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%);
+            background: linear-gradient(135deg, #a5b4fc 0%, var(--primary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
 
         .subtitle {
             font-size: 1rem;
             color: var(--text-muted);
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
 
         /* Forms / Login */
         .auth-container {
             display: grid;
-            grid-template-columns: 1.2fr 1.8fr;
-            gap: 30px;
-            margin-bottom: 35px;
+            grid-template-columns: 1.15fr 1.85fr;
+            gap: 32px;
+            align-items: stretch;
         }
 
         @media (max-width: 768px) {
             .auth-container {
                 grid-template-columns: 1fr;
             }
+            .portal-card {
+                padding: 24px 20px;
+            }
         }
 
         .auth-card {
-            background: rgba(0, 0, 0, 0.2);
+            background: var(--surface-hover);
             border: 1px solid var(--card-border);
             border-radius: 20px;
-            padding: 25px;
+            padding: 26px;
             display: flex;
             flex-direction: column;
             gap: 15px;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.05);
         }
 
         .form-group {
@@ -105,79 +247,87 @@
 
         .form-group label {
             font-size: 0.85rem;
-            font-weight: 600;
-            color: #c7d2fe;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .form-control {
             width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 1rem;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 13px 15px;
+            border-radius: 12px;
+            font-size: 0.95rem;
             outline: none;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
         }
 
         .form-control:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
+            box-shadow: 0 0 14px var(--primary-glow);
         }
 
         .form-control option {
-            background-color: #1e1b4b;
-            color: white;
+            background-color: var(--modal-bg);
+            color: var(--text-main);
         }
 
         .alert-box {
             background: rgba(251, 191, 36, 0.1);
-            border: 1px solid rgba(251, 191, 36, 0.2);
+            border: 1px solid rgba(251, 191, 36, 0.25);
             color: var(--warning);
             padding: 12px;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 0.8rem;
-            line-height: 1.4;
+            line-height: 1.45;
         }
 
         .btn {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: 600;
+            padding: 13px 18px;
+            border-radius: 12px;
+            font-weight: 700;
             font-size: 1rem;
             cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 10px var(--primary-glow);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 14px var(--primary-glow);
             text-align: center;
             text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn:hover {
-            background: #6366f1;
+            background: var(--primary-hover);
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--primary-glow);
         }
 
         /* Leaderboard Section */
         .leaderboard-title {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 800;
-            color: #fbbf24;
+            color: var(--warning);
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .leaderboard-tabs {
             display: flex;
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--surface-hover);
             padding: 4px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            border: 1px solid var(--card-border);
             margin-bottom: 15px;
             gap: 4px;
         }
@@ -187,27 +337,27 @@
             background: transparent;
             border: none;
             color: var(--text-muted);
-            padding: 10px;
+            padding: 9px;
             border-radius: 10px;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
+            font-weight: 700;
+            font-size: 0.88rem;
             transition: all 0.2s;
         }
 
         .tab-btn.active {
             background: var(--primary);
             color: white;
-            box-shadow: 0 4px 10px var(--primary-glow);
+            box-shadow: 0 3px 10px var(--primary-glow);
         }
 
         .table-responsive {
             width: 100%;
-            max-height: 400px;
+            max-height: 380px;
             overflow-y: auto;
             border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            background: var(--surface-hover);
         }
 
         table {
@@ -217,40 +367,41 @@
         }
 
         th {
-            background: rgba(255, 255, 255, 0.04);
-            color: #c7d2fe;
+            background: var(--table-header);
+            color: var(--text-muted);
             font-weight: 700;
-            padding: 12px 15px;
-            font-size: 0.85rem;
+            padding: 12px 14px;
+            font-size: 0.82rem;
             position: sticky;
             top: 0;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid var(--card-border);
             z-index: 1;
         }
 
         td {
-            padding: 12px 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 0.9rem;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--card-border);
+            font-size: 0.88rem;
         }
 
         tr:hover {
-            background: rgba(255, 255, 255, 0.02);
+            background: var(--surface-hover);
         }
 
         /* Medals */
         .rank-cell {
-            font-weight: bold;
+            font-weight: 800;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
+            font-size: 0.82rem;
         }
-        .rank-1 { background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid #fbbf24; }
-        .rank-2 { background: rgba(156, 163, 175, 0.2); color: #d1d5db; border: 1px solid #d1d5db; }
-        .rank-3 { background: rgba(180, 83, 9, 0.2); color: #f97316; border: 1px solid #f97316; }
+        .rank-1 { background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(245, 158, 11, 0.4)); color: #fbbf24; border: 1.5px solid #fbbf24; }
+        .rank-2 { background: linear-gradient(135deg, rgba(156, 163, 175, 0.3), rgba(107, 114, 128, 0.4)); color: #e2e8f0; border: 1.5px solid #cbd5e1; }
+        .rank-3 { background: linear-gradient(135deg, rgba(217, 119, 6, 0.3), rgba(180, 83, 9, 0.4)); color: #f97316; border: 1.5px solid #ea580c; }
 
         /* Modal / Dialog */
         .modal {
@@ -260,71 +411,84 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(11, 15, 25, 0.85);
-            backdrop-filter: blur(8px);
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(12px);
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
         .modal-content {
-            background: #1e1b4b;
+            background: var(--modal-bg);
             border: 1px solid var(--card-border);
-            border-radius: 24px;
-            width: 90%;
-            max-width: 450px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-            animation: modalFadeIn 0.3s ease-out;
+            border-radius: 26px;
+            width: 100%;
+            max-width: 460px;
+            padding: 32px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+            animation: modalFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+            from { opacity: 0; transform: scale(0.92) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
     </style>
 </head>
 <body>
+    <!-- Theme Switcher -->
+    <div class="theme-bar">
+        <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted);">🎨 底色：</span>
+        <div class="theme-dot dot-midnight" title="星空暗夜 (預設)" onclick="setTheme('midnight')"></div>
+        <div class="theme-dot dot-ocean" title="沉靜湛藍" onclick="setTheme('ocean')"></div>
+        <div class="theme-dot dot-forest" title="森林翡翠" onclick="setTheme('forest')"></div>
+        <div class="theme-dot dot-sunset" title="暮光幻紫" onclick="setTheme('sunset')"></div>
+        <div class="theme-dot dot-light" title="晨曦明亮" onclick="setTheme('light')"></div>
+    </div>
+
     <div class="container">
         <div class="portal-card">
-            <h1>餐旅概論雲端闖關與檢測系統</h1>
-            <div class="subtitle">全國高中職學生線上學習、小考與模擬測驗系統</div>
+            <div style="text-align: center;">
+                <span class="hero-badge">🎯 116統測・升學衝刺・全真題庫</span>
+                <h1>餐旅概論雲端闖關系統</h1>
+                <div class="subtitle">全國高中職學生線上學習、小考與全真模擬測驗</div>
+            </div>
 
             <div class="auth-container">
                 <!-- Authentication Form -->
                 <div class="auth-card">
-                    <h3 style="font-weight: 700; color: #a5b4fc; text-align: center; margin-bottom: 5px;">學生登入</h3>
-                    <div style="font-size:0.8rem; text-align:center; color:var(--text-muted); margin-bottom:15px;">首次登入即為註冊</div>
+                    <h3 style="font-weight: 800; color: var(--text-main); text-align: center; margin-bottom: 2px;">學生登入</h3>
+                    <div style="font-size:0.8rem; text-align:center; color:var(--text-muted); margin-bottom:12px;">首次輸入帳密即自動註冊</div>
                     
                     <div class="form-group">
-                        <label for="username">學生帳號</label>
-                        <input type="text" id="username" class="form-control" placeholder="請自訂帳號 (英文/數字/身分證)..." required autocomplete="username">
+                        <label for="username">👤 學生帳號</label>
+                        <input type="text" id="username" class="form-control" placeholder="自訂帳號 (英數字/身分證)..." required autocomplete="username">
                     </div>
 
                     <div class="form-group">
-                        <label for="password">登入密碼</label>
-                        <input type="password" id="password" class="form-control" placeholder="請自訂密碼..." required autocomplete="current-password">
+                        <label for="password">🔒 登入密碼</label>
+                        <input type="password" id="password" class="form-control" placeholder="自訂密碼..." required autocomplete="current-password">
                     </div>
 
                     <div class="alert-box">
-                        ⚠️ **防忘記密碼聲明**：<br>
-                        本系統為完全無伺服器架構，**無法進行密碼找回或重設**。初次登入設定的密碼請務必牢記，以免辛苦取得的成績與關卡進度作廢！
+                        ⚠️ **重要提醒**：初次登入設定的密碼請務必牢記，本系統無法重設密碼！
                     </div>
 
-                    <button onclick="handleLogin()" class="btn">登入 / 開始註冊</button>
-                    <div style="text-align: center; margin-top: 10px;">
-                        <a href="#" onclick="openTeacherLogin()" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: none;">💼 教師/管理員登入</a>
+                    <button onclick="handleLogin()" class="btn">🚀 登入 / 開始挑戰</button>
+                    <div style="text-align: center; margin-top: 5px;">
+                        <a href="#" onclick="openTeacherLogin()" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: none; font-weight: 600;">💼 教師/管理員後台</a>
                     </div>
                 </div>
 
                 <!-- Leaderboard Section -->
                 <div>
                     <div class="leaderboard-title">
-                        <span>🏆</span> 實時總積分榮譽榜 (全國排行)
+                        <span>🏆</span> 實時總積分榮譽榜
                     </div>
                     
                     <div class="leaderboard-tabs">
-                        <button id="tabAll" class="tab-btn active" onclick="switchTab('all')">全國排行</button>
+                        <button id="tabAll" class="tab-btn active" onclick="switchTab('all')">全台總排行</button>
                         <button id="tabMySchool" class="tab-btn" onclick="switchTab('school')">校內排行</button>
                     </div>
 
@@ -333,9 +497,9 @@
                             <thead>
                                 <tr>
                                     <th style="width: 15%; text-align: center;">名次</th>
-                                    <th style="width: 35%;">學校名稱</th>
+                                    <th style="width: 38%;">學校名稱</th>
                                     <th style="width: 25%;">姓名/暱稱</th>
-                                    <th style="width: 25%; text-align: right;">總積分</th>
+                                    <th style="width: 22%; text-align: right;">總積分</th>
                                 </tr>
                             </thead>
                             <tbody id="leaderboardBody">
@@ -353,11 +517,11 @@
     <!-- Registration Modal -->
     <div id="registerModal" class="modal" style="display: none;">
         <div class="modal-content">
-            <h3 style="margin-bottom: 10px; font-weight: 700; color: #a5b4fc; text-align: center;">🆕 新使用者註冊</h3>
+            <h3 style="margin-bottom: 8px; font-weight: 800; color: var(--text-main); text-align: center;">🆕 新使用者註冊</h3>
             <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; text-align: center;">系統偵測到此帳號為第一次使用，請選擇學校與填寫姓名：</p>
             
             <div class="form-group" style="margin-bottom: 15px;">
-                <label for="regRegion" style="text-align: left;">學校區域</label>
+                <label for="regRegion">📍 學校區域</label>
                 <select id="regRegion" class="form-control" onchange="updateSchoolDropdown()">
                     <option value="">-- 請選擇區域 --</option>
                     <option value="north">北區 (基宜雙北桃竹)</option>
@@ -368,29 +532,29 @@
             </div>
 
             <div class="form-group" style="margin-bottom: 15px;">
-                <label for="regSchool" style="text-align: left;">學校名稱</label>
+                <label for="regSchool">🏫 學校名稱</label>
                 <select id="regSchool" class="form-control" onchange="checkSchoolManual()">
                     <option value="">-- 請先選擇區域 --</option>
                 </select>
             </div>
 
             <div class="form-group" id="regSchoolManualContainer" style="margin-bottom: 15px; display: none;">
-                <label for="regSchoolManual" style="text-align: left; color: #fbbf24;">手動輸入學校名稱</label>
-                <input type="text" id="regSchoolManual" class="form-control" placeholder="請輸入您的完整校名...">
+                <label for="regSchoolManual" style="color: var(--warning);">✍️ 手動輸入校名</label>
+                <input type="text" id="regSchoolManual" class="form-control" placeholder="請輸入完整校名...">
             </div>
 
             <div class="form-group" style="margin-bottom: 20px;">
-                <label for="regName" style="text-align: left;">學生姓名 / 暱稱</label>
+                <label for="regName">🏷️ 學生姓名 / 暱稱</label>
                 <input type="text" id="regName" class="form-control" placeholder="例：王小明...">
             </div>
 
-            <div class="alert-box" style="margin-bottom: 20px; text-align: left; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: #fca5a5;">
-                🚨 **重要警告**：您的帳號為 <strong id="regUsernameLabel"></strong>，密碼與剛才輸入的完全相同。此密碼無法變更或補發，請再次確認您的帳密！
+            <div class="alert-box" style="margin-bottom: 20px; text-align: left;">
+                🚨 您的帳號為 <strong id="regUsernameLabel" style="color: var(--text-main);"></strong>，密碼無法補發，請再次確認牢記！
             </div>
 
             <div style="display: flex; gap: 12px;">
-                <button onclick="closeRegisterModal()" class="btn" style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text-main); box-shadow: none;">返回修改</button>
-                <button onclick="submitRegister()" class="btn" style="flex: 1; background: var(--success); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);">完成註冊並登入</button>
+                <button onclick="closeRegisterModal()" class="btn" style="flex: 1; background: var(--surface-hover); border: 1px solid var(--card-border); color: var(--text-main); box-shadow: none;">返回</button>
+                <button onclick="submitRegister()" class="btn" style="flex: 1; background: var(--success); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);">完成註冊並登入</button>
             </div>
         </div>
     </div>
@@ -398,18 +562,37 @@
     <!-- Teacher Password Modal -->
     <div id="passwordModal" class="modal" style="display: none;">
         <div class="modal-content" style="max-width: 380px;">
-            <h3 style="margin-bottom: 10px; font-weight: 700; color: #a5b4fc; text-align: center;">教師密碼驗證</h3>
-            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; text-align: center;">請輸入管理密碼進入教師後台：</p>
-            <input type="password" id="passwordInput" class="form-control" placeholder="請輸入密碼..." style="text-align: center; margin-bottom: 20px;" onkeydown="if(event.key==='Enter') submitPassword()">
-            <div id="passwordError" style="color: var(--error); font-size: 0.85rem; margin-top: -15px; margin-bottom: 15px; display: none; text-align: center;">密碼錯誤，請重新輸入！</div>
+            <h3 style="margin-bottom: 8px; font-weight: 800; color: var(--text-main); text-align: center;">💼 教師密碼驗證</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 18px; text-align: center;">請輸入管理密碼進入教師後台：</p>
+            <input type="password" id="passwordInput" class="form-control" placeholder="請輸入密碼..." style="text-align: center; margin-bottom: 18px;" onkeydown="if(event.key==='Enter') submitPassword()">
+            <div id="passwordError" style="color: var(--error); font-size: 0.85rem; margin-top: -12px; margin-bottom: 15px; display: none; text-align: center; font-weight: bold;">密碼錯誤，請重新輸入！</div>
             <div style="display: flex; gap: 12px;">
-                <button onclick="closePasswordModal()" class="btn" style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text-main); box-shadow: none;">取消</button>
-                <button onclick="submitPassword()" class="btn" style="flex: 1;">登入</button>
+                <button onclick="closePasswordModal()" class="btn" style="flex: 1; background: var(--surface-hover); border: 1px solid var(--card-border); color: var(--text-main); box-shadow: none;">取消</button>
+                <button onclick="submitPassword()" class="btn" style="flex: 1;">確認登入</button>
             </div>
         </div>
     </div>
 
     <script>
+        // Theme Management
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('game_theme', theme);
+            
+            // Update active dot
+            document.querySelectorAll('.theme-dot').forEach(dot => {
+                dot.classList.remove('active');
+            });
+            const activeDot = document.querySelector(`.dot-${theme}`);
+            if (activeDot) activeDot.classList.add('active');
+        }
+
+        // Apply saved theme on load
+        (function() {
+            const savedTheme = localStorage.getItem('game_theme') || 'midnight';
+            setTheme(savedTheme);
+        })();
+
         // ======= Firebase Configuration =======
         const firebaseConfig = {
             apiKey: "AIzaSyB8NyckuEi1iN2VHsNYhXsWMTq0Ily4bEM",
@@ -423,7 +606,6 @@
         };
         // ======================================
 
-        // High schools with hospitality & tourism in Taiwan
         const schoolListByRegion = {
             "north": [
                 "國立基隆商工", "基隆市私立培德工家", "基隆市私立光隆家商",
@@ -457,14 +639,12 @@
         let db = null;
         let allScores = [];
         let allUsers = {};
-        let currentFilter = "all"; // "all" or "school"
+        let currentFilter = "all";
 
-        // Initialize Firebase
         try {
             firebase.initializeApp(firebaseConfig);
             db = firebase.database();
             
-            // Listen to real-time changes in scores
             db.ref("scores").on('value', snapshot => {
                 allScores = [];
                 const val = snapshot.val();
@@ -476,7 +656,6 @@
                 refreshLeaderboard();
             });
 
-            // Listen to users
             db.ref("users").on('value', snapshot => {
                 allUsers = snapshot.val() || {};
                 refreshLeaderboard();
@@ -485,7 +664,6 @@
             console.error("Firebase connection failed", e);
         }
 
-        // Authentication Flow
         let pendingUsername = "";
         let pendingPassword = "";
 
@@ -498,28 +676,24 @@
                 return;
             }
 
-            pendingUsername = userField.toLowerCase().replace(/[^a-z0-9_-]/g, ""); // Clean username
+            pendingUsername = userField.toLowerCase().replace(/[^a-z0-9_-]/g, "");
             if (pendingUsername !== userField.toLowerCase()) {
                 alert("帳號格式限用小寫英文、數字、底線或破折號！");
                 return;
             }
             pendingPassword = passField;
 
-            // Check if user exists in Firebase
             if (db) {
                 db.ref(`users/${pendingUsername}`).once('value')
                 .then(snapshot => {
                     const user = snapshot.val();
                     if (user) {
-                        // User exists, verify password
                         if (user.password === pendingPassword) {
-                            // Login successful!
                             saveUserSession(pendingUsername, user.name, user.school, user.unlocked_level || 1);
                         } else {
-                            alert("密碼錯誤！請重新輸入。如果是首次使用，表示此帳號已被他人註冊，請換一個新帳號。");
+                            alert("密碼錯誤！請重新輸入。若為首次使用，表示此帳號已被他人註冊，請換一個新帳號。");
                         }
                     } else {
-                        // User does not exist, trigger registration modal
                         document.getElementById("regUsernameLabel").innerText = pendingUsername;
                         document.getElementById("regRegion").value = "";
                         updateSchoolDropdown();
@@ -529,7 +703,7 @@
                 })
                 .catch(err => {
                     console.error("Authentication error:", err);
-                    alert("網路連線失敗，請檢查您的網路！或請檢查 Firebase 資料庫安全規則是否已開放 users 節點的寫入權限！");
+                    alert("連線失敗，請檢查網路連線或稍後再試！");
                 });
             } else {
                 alert("資料庫連線中，請稍後再試！");
@@ -541,11 +715,8 @@
             const schoolSelect = document.getElementById("regSchool");
             const manualContainer = document.getElementById("regSchoolManualContainer");
             
-            // Reset manual input
             manualContainer.style.display = "none";
             document.getElementById("regSchoolManual").value = "";
-
-            // Clear options
             schoolSelect.innerHTML = "";
 
             if (!region) {
@@ -556,7 +727,6 @@
                 return;
             }
 
-            // Populate options
             const optDefault = document.createElement("option");
             optDefault.value = "";
             optDefault.innerText = "-- 請選擇學校 --";
@@ -570,7 +740,6 @@
                 schoolSelect.appendChild(opt);
             });
 
-            // Add other option
             const optOther = document.createElement("option");
             optOther.value = "other";
             optOther.innerText = "其他學校 (手動輸入)...";
@@ -629,7 +798,7 @@
                 })
                 .catch(err => {
                     console.error("Registration error:", err);
-                    alert("註冊寫入失敗！請確認 Firebase 控制台中的 Database Rules (安全規則) 已開啟 users 節點的寫入權限，詳細規則請參閱 DEPLOY_GUIDE.md。");
+                    alert("註冊寫入失敗，請檢查網路連線或稍後再試！");
                 });
             }
         }
@@ -639,19 +808,15 @@
             localStorage.setItem("game_user_name", name);
             localStorage.setItem("game_user_school", school);
             localStorage.setItem("game_unlocked_level", unlockedLevel);
-            
-            // Redirect to gameplay page
             window.location.href = "game.html";
         }
 
-        // Leaderboard Calculation
         function refreshLeaderboard() {
             const tbody = document.getElementById("leaderboardBody");
             tbody.innerHTML = "";
 
             const studentMap = {};
 
-            // Initialize from registered users
             for (let uname in allUsers) {
                 studentMap[uname] = {
                     username: uname,
@@ -663,7 +828,6 @@
                 };
             }
 
-            // Ingest scores
             allScores.forEach(s => {
                 const uname = s.username;
                 const score = s.score;
@@ -677,7 +841,6 @@
                 }
             });
 
-            // Calculate aggregates
             const list = [];
             for (let uname in studentMap) {
                 const student = studentMap[uname];
@@ -698,14 +861,12 @@
                 }
             }
 
-            // Sort
             list.sort((a, b) => {
                 if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
                 if (b.completedCount !== a.completedCount) return b.completedCount - a.completedCount;
                 return a.username.localeCompare(b.username);
             });
 
-            // Filter
             let filtered = list;
             const mySchool = localStorage.getItem("game_user_school");
             
@@ -732,15 +893,15 @@
                 const isMe = (s.username === localStorage.getItem("game_username"));
                 const tr = document.createElement("tr");
                 if (isMe) {
-                    tr.style.background = "rgba(79, 70, 229, 0.2)";
+                    tr.style.background = "var(--surface-hover)";
                     tr.style.outline = "1.5px solid var(--primary)";
                 }
                 
                 tr.innerHTML = `
-                    <td style="display: flex; justify-content: center; align-items: center; border-bottom: none; height: 46px;">${rankHtml}</td>
+                    <td style="display: flex; justify-content: center; align-items: center; border-bottom: none; height: 44px;">${rankHtml}</td>
                     <td><b>${s.school}</b></td>
                     <td><b>${s.name}</b></td>
-                    <td style="text-align: right; color: #fbbf24; font-weight: bold;">${s.totalScore} 分</td>
+                    <td style="text-align: right; color: var(--warning); font-weight: 800;">${s.totalScore} 分</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -753,7 +914,6 @@
             refreshLeaderboard();
         }
 
-        // Teacher password modal controls
         function openTeacherLogin() {
             if (localStorage.getItem("teacher_authenticated") === "true") {
                 window.location.href = "admin.html";
