@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>餐旅概論雲端闖關與檢測系統 - 入口</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Load Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary: #4f46e5;
+            --primary-glow: rgba(79, 70, 229, 0.4);
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #fbbf24;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, var(--bg-color) 80%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .portal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(16px);
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 50px rgba(79, 70, 229, 0.1);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            text-align: center;
+            background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Forms / Login */
+        .auth-container {
+            display: grid;
+            grid-template-columns: 1.2fr 1.8fr;
+            gap: 30px;
+            margin-bottom: 35px;
+        }
+
+        @media (max-width: 768px) {
+            .auth-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .auth-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #c7d2fe;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
+        }
+
+        .form-control option {
+            background-color: #1e1b4b;
+            color: white;
+        }
+
+        .alert-box {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            color: var(--warning);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px var(--primary-glow);
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: #6366f1;
+            transform: translateY(-2px);
+        }
+
+        /* Leaderboard Section */
+        .leaderboard-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #fbbf24;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .leaderboard-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 15px;
+            gap: 4px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px var(--primary-glow);
+        }
+
+        .table-responsive {
+            width: 100%;
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.04);
+            color: #c7d2fe;
+            font-weight: 700;
+            padding: 12px 15px;
+            font-size: 0.85rem;
+            position: sticky;
+            top: 0;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+            z-index: 1;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Medals */
+        .rank-cell {
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+        .rank-1 { background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid #fbbf24; }
+        .rank-2 { background: rgba(156, 163, 175, 0.2); color: #d1d5db; border: 1px solid #d1d5db; }
+        .rank-3 { background: rgba(180, 83, 9, 0.2); color: #f97316; border: 1px solid #f97316; }
+
+        /* Modal / Dialog */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #1e1b4b;
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            width: 90%;
+            max-width: 450px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="portal-card">
+            <h1>餐旅概論雲端闖關與檢測系統</h1>
+            <div class="subtitle">全國高中職學生線上學習、小考與模擬測驗系統</div>
+
+            <div class="auth-container">
+                <!-- Authentication Form -->
+                <div class="auth-card">
+                    <h3 style="font-weight: 700; color: #a5b4fc; text-align: center; margin-bottom: 5px;">學生登入</h3>
+                    <div style="font-size:0.8rem; text-align:center; color:var(--text-muted); margin-bottom:15px;">首次登入即為註冊</div>
+                    
+                    <div class="form-group">
+                        <label for="username">學生帳號</label>
+                        <input type="text" id="username" class="form-control" placeholder="請自訂帳號 (英文/數字/身分證)..." required autocomplete="username">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">登入密碼</label>
+                        <input type="password" id="password" class="form-control" placeholder="請自訂密碼..." required autocomplete="current-password">
+                    </div>
+
+                    <div class="alert-box">
+                        ⚠️ **防忘記密碼聲明**：<br>
+                        本系統為完全無伺服器架構，**無法進行密碼找回或重設**。初次登入設定的密碼請務必牢記，以免辛苦取得的成績與關卡進度作廢！
+                    </div>
+
+                    <button onclick="handleLogin()" class="btn">登入 / 開始註冊</button>
+                    <div style="text-align: center; margin-top: 10px;">
+                        <a href="#" onclick="openTeacherLogin()" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: none;">💼 教師/管理員登入</a>
+                    </div>
+                </div>
+
+                <!-- Leaderboard Section -->
+                <div>
+                    <div class="leaderboard-title">
+                        <span>🏆</span> 實時總積分榮譽榜 (全國排行)
+                    </div>
+                    
+                    <div class="leaderboard-tabs">
+                        <button id="tabAll" class="tab-btn active" onclick="switchTab('all')">全國排行</button>
+                        <button id="tabMySchool" class="tab-btn" onclick="switchTab('school')">校內排行</button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 15%; text-align: center;">名次</th>
+                                    <th style="width: 35%;">學校名稱</th>
+                                    <th style="width: 25%;">姓名/暱稱</th>
+                                    <th style="width: 25%; text-align: right;">總積分</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboardBody">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 30px;">載入即時排名中...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div id="registerModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 10px; font-weight: 700; color: #a5b4fc; text-align: center;">🆕 新使用者註冊</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; text-align: center;">系統偵測到此帳號為第一次使用，請選擇學校與填寫姓名：</p>
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label for="regRegion" style="text-align: left;">學校區域</label>
+                <select id="regRegion" class="form-control" onchange="updateSchoolDropdown()">
+                    <option value="">-- 請選擇區域 --</option>
+                    <option value="north">北區 (基宜雙北桃竹)</option>
+                    <option value="central">中區 (苗中彰投雲)</option>
+                    <option value="south">南區 (嘉台高屏)</option>
+                    <option value="east_islands">東區及離島 (花東澎金)</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label for="regSchool" style="text-align: left;">學校名稱</label>
+                <select id="regSchool" class="form-control" onchange="checkSchoolManual()">
+                    <option value="">-- 請先選擇區域 --</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="regSchoolManualContainer" style="margin-bottom: 15px; display: none;">
+                <label for="regSchoolManual" style="text-align: left; color: #fbbf24;">手動輸入學校名稱</label>
+                <input type="text" id="regSchoolManual" class="form-control" placeholder="請輸入您的完整校名...">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label for="regName" style="text-align: left;">學生姓名 / 暱稱</label>
+                <input type="text" id="regName" class="form-control" placeholder="例：王小明...">
+            </div>
+
+            <div class="alert-box" style="margin-bottom: 20px; text-align: left; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: #fca5a5;">
+                🚨 **重要警告**：您的帳號為 <strong id="regUsernameLabel"></strong>，密碼與剛才輸入的完全相同。此密碼無法變更或補發，請再次確認您的帳密！
+            </div>
+
+            <div style="display: flex; gap: 12px;">
+                <button onclick="closeRegisterModal()" class="btn" style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text-main); box-shadow: none;">返回修改</button>
+                <button onclick="submitRegister()" class="btn" style="flex: 1; background: var(--success); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);">完成註冊並登入</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Teacher Password Modal -->
+    <div id="passwordModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 380px;">
+            <h3 style="margin-bottom: 10px; font-weight: 700; color: #a5b4fc; text-align: center;">教師密碼驗證</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; text-align: center;">請輸入管理密碼進入教師後台：</p>
+            <input type="password" id="passwordInput" class="form-control" placeholder="請輸入密碼..." style="text-align: center; margin-bottom: 20px;" onkeydown="if(event.key==='Enter') submitPassword()">
+            <div id="passwordError" style="color: var(--error); font-size: 0.85rem; margin-top: -15px; margin-bottom: 15px; display: none; text-align: center;">密碼錯誤，請重新輸入！</div>
+            <div style="display: flex; gap: 12px;">
+                <button onclick="closePasswordModal()" class="btn" style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text-main); box-shadow: none;">取消</button>
+                <button onclick="submitPassword()" class="btn" style="flex: 1;">登入</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ======= Firebase Configuration =======
+        const firebaseConfig = {
+            apiKey: "AIzaSyAj1xkOZXY4tr2kSBgC1Om2uy_cjvdUncQ",
+            authDomain: "tourism-vocab-game.firebaseapp.com",
+            databaseURL: "https://tourism-vocab-game-default-rtdb.firebaseio.com",
+            projectId: "tourism-vocab-game",
+            storageBucket: "tourism-vocab-game.firebasestorage.app",
+            messagingSenderId: "208895481318",
+            appId: "1:208895481318:web:894ee572bbd5c14362b227",
+            measurementId: "G-SKLPH0K75S"
+        };
+        // ======================================
+
+        // High schools with hospitality & tourism in Taiwan
+        const schoolListByRegion = {
+            "north": [
+                "國立基隆商工", "基隆市私立培德工家", "基隆市私立光隆家商",
+                "國立頭城家商", "宜蘭縣私立羅東工商",
+                "臺北市私立開平餐飲學校", "臺北市立松山家商", "臺北市私立稻江護家", "臺北市私立稻江商職", "臺北市私立育達高中", "臺北市私立強恕高中", "臺北市私立喬治工商", "臺北市私立景文高中", "臺北市私立十信高中",
+                "新北市立淡水商工", "新北市立瑞芳高工", "新北市立鶯歌工商", "新北市私立能仁家商", "新北市私立莊敬工家", "新北市私立樹人家商", "新北市私立智光商工", "新北市私立豫章工商", "新北市私立穀保家商", "新北市私立東海高中",
+                "桃園市立羅浮高中", "桃園市私立永平工商", "桃園市私立啟英高中", "桃園市私立育達高中", "桃園市私立治平高中", "桃園市私立新興高中", "桃園市私立光啟高中", "桃園市私立大興高中", "桃園市私立清華高中", "桃園市私立成功工商",
+                "國立新竹高商", "新竹市私立光復高中", "新竹市私立世界高中", "新竹縣私立仰德高中", "新竹縣私立東泰高中"
+            ],
+            "central": [
+                "國立興大附農", "國立臺中家商", "國立豐原商業高中", "國立霧峰農工", "國立沙鹿工業(綜合高中)", "國立東勢高工(綜合高中)", "臺中市私立明德高中", "臺中市私立新民高中", "臺中市私立葳格高中", "臺中市私立宜寧高中", "臺中市私立嶺東高中", "臺中市私立慈明高中", "臺中市私立僑泰高中", "臺中市私立青年高中", "臺中市私立明台高中", "臺中市私立明道中學", "臺中市私立玉山高中", "臺中市私立嘉陽高中", "臺中市私立致用高中",
+                "國立彰化高商", "國立員林家商", "國立二林工商", "彰化縣私立達德商工", "彰化縣私立大慶商工",
+                "國立水里商工", "國立仁愛高農", "國立南投高商", "南投縣私立同德高中",
+                "國立苗栗高商", "苗栗縣私立中興商工", "苗栗縣私立育民工家", "苗栗縣私立龍德家商",
+                "國立斗六家商", "雲林縣私立義峰高中", "雲林縣私立大成商工", "雲林縣私立大德工商"
+            ],
+            "south": [
+                "國立嘉義家職", "嘉義市私立東吳工家", "嘉義縣私立萬能工商", "嘉義縣私立同濟高中",
+                "國立臺南高商", "國立曾文家商", "國立北門農工", "國立新豐高中", "國立台南大學附中", "臺南市私立亞洲餐旅學校", "臺南市私立六信高中", "臺南市私立育德工家", "臺南市私立慈幼工商", "臺南市私立光華高中", "臺南市私立南英商工", "臺南市私立長榮女中",
+                "國立高餐大附中", "高雄市私立三信家商", "高雄市私立樹德家商", "高雄市私立中山工商", "高雄市私立高苑工商", "高雄市私立華德工家", "高雄市私立復華高中", "高雄市私立立志高中", "高雄市私立大榮高中", "高雄市立旗美高中",
+                "國立佳冬農工", "國立恆春工商", "屏東縣私立日新工商", "屏東縣私立民生家商", "國立東港海事", "屏東縣私立陸興高中"
+            ],
+            "east_islands": [
+                "國立花蓮高商", "國立花蓮農校", "花蓮縣私立上騰工商", "國立花蓮港海事",
+                "國立臺東高商", "國立成功商水", "國立台東專科學校(高職部)",
+                "國立馬公高中",
+                "國立金門農工"
+            ]
+        };
+
+        let db = null;
+        let allScores = [];
+        let allUsers = {};
+        let currentFilter = "all"; // "all" or "school"
+
+        // Initialize Firebase
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+            
+            // Listen to real-time changes in scores
+            db.ref("scores").on('value', snapshot => {
+                allScores = [];
+                const val = snapshot.val();
+                if (val) {
+                    for (let key in val) {
+                        allScores.push(val[key]);
+                    }
+                }
+                refreshLeaderboard();
+            });
+
+            // Listen to users
+            db.ref("users").on('value', snapshot => {
+                allUsers = snapshot.val() || {};
+                refreshLeaderboard();
+            });
+        } catch (e) {
+            console.error("Firebase connection failed", e);
+        }
+
+        // Authentication Flow
+        let pendingUsername = "";
+        let pendingPassword = "";
+
+        function handleLogin() {
+            const userField = document.getElementById("username").value.trim();
+            const passField = document.getElementById("password").value.trim();
+
+            if (!userField || !passField) {
+                alert("請填寫帳號與密碼！");
+                return;
+            }
+
+            pendingUsername = userField.toLowerCase().replace(/[^a-z0-9_-]/g, ""); // Clean username
+            if (pendingUsername !== userField.toLowerCase()) {
+                alert("帳號格式限用小寫英文、數字、底線或破折號！");
+                return;
+            }
+            pendingPassword = passField;
+
+            // Check if user exists in Firebase
+            if (db) {
+                db.ref(`users/${pendingUsername}`).once('value')
+                .then(snapshot => {
+                    const user = snapshot.val();
+                    if (user) {
+                        // User exists, verify password
+                        if (user.password === pendingPassword) {
+                            // Login successful!
+                            saveUserSession(pendingUsername, user.name, user.school, user.unlocked_level || 1);
+                        } else {
+                            alert("密碼錯誤！請重新輸入。如果是首次使用，表示此帳號已被他人註冊，請換一個新帳號。");
+                        }
+                    } else {
+                        // User does not exist, trigger registration modal
+                        document.getElementById("regUsernameLabel").innerText = pendingUsername;
+                        document.getElementById("regRegion").value = "";
+                        updateSchoolDropdown();
+                        document.getElementById("regName").value = "";
+                        document.getElementById("registerModal").style.display = "flex";
+                    }
+                })
+                .catch(err => {
+                    console.error("Authentication error:", err);
+                    alert("網路連線失敗，請檢查您的網路！或請檢查 Firebase 資料庫安全規則是否已開放 users 節點的寫入權限！");
+                });
+            } else {
+                alert("資料庫連線中，請稍後再試！");
+            }
+        }
+
+        function updateSchoolDropdown() {
+            const region = document.getElementById("regRegion").value;
+            const schoolSelect = document.getElementById("regSchool");
+            const manualContainer = document.getElementById("regSchoolManualContainer");
+            
+            // Reset manual input
+            manualContainer.style.display = "none";
+            document.getElementById("regSchoolManual").value = "";
+
+            // Clear options
+            schoolSelect.innerHTML = "";
+
+            if (!region) {
+                const opt = document.createElement("option");
+                opt.value = "";
+                opt.innerText = "-- 請先選擇區域 --";
+                schoolSelect.appendChild(opt);
+                return;
+            }
+
+            // Populate options
+            const optDefault = document.createElement("option");
+            optDefault.value = "";
+            optDefault.innerText = "-- 請選擇學校 --";
+            schoolSelect.appendChild(optDefault);
+
+            const schools = schoolListByRegion[region] || [];
+            schools.forEach(sch => {
+                const opt = document.createElement("option");
+                opt.value = sch;
+                opt.innerText = sch;
+                schoolSelect.appendChild(opt);
+            });
+
+            // Add other option
+            const optOther = document.createElement("option");
+            optOther.value = "other";
+            optOther.innerText = "其他學校 (手動輸入)...";
+            schoolSelect.appendChild(optOther);
+        }
+
+        function checkSchoolManual() {
+            const schoolSelect = document.getElementById("regSchool");
+            const manualContainer = document.getElementById("regSchoolManualContainer");
+            if (schoolSelect.value === "other") {
+                manualContainer.style.display = "block";
+                document.getElementById("regSchoolManual").focus();
+            } else {
+                manualContainer.style.display = "none";
+                document.getElementById("regSchoolManual").value = "";
+            }
+        }
+
+        function closeRegisterModal() {
+            document.getElementById("registerModal").style.display = "none";
+        }
+
+        function submitRegister() {
+            const region = document.getElementById("regRegion").value;
+            const schoolSelect = document.getElementById("regSchool");
+            const name = document.getElementById("regName").value.trim();
+
+            if (!region) {
+                alert("請選擇學校區域！");
+                return;
+            }
+
+            let school = schoolSelect.value;
+            if (school === "other") {
+                school = document.getElementById("regSchoolManual").value.trim();
+            }
+
+            if (!school || !name) {
+                alert("請選擇或填寫學校名稱與學生姓名！");
+                return;
+            }
+
+            if (db) {
+                const userData = {
+                    password: pendingPassword,
+                    school: school,
+                    name: name,
+                    unlocked_level: 1,
+                    registered_at: firebase.database.ServerValue.TIMESTAMP
+                };
+
+                db.ref(`users/${pendingUsername}`).set(userData)
+                .then(() => {
+                    closeRegisterModal();
+                    saveUserSession(pendingUsername, name, school, 1);
+                })
+                .catch(err => {
+                    console.error("Registration error:", err);
+                    alert("註冊寫入失敗！請確認 Firebase 控制台中的 Database Rules (安全規則) 已開啟 users 節點的寫入權限，詳細規則請參閱 DEPLOY_GUIDE.md。");
+                });
+            }
+        }
+
+        function saveUserSession(username, name, school, unlockedLevel) {
+            localStorage.setItem("game_username", username);
+            localStorage.setItem("game_user_name", name);
+            localStorage.setItem("game_user_school", school);
+            localStorage.setItem("game_unlocked_level", unlockedLevel);
+            
+            // Redirect to gameplay page
+            window.location.href = "game.html";
+        }
+
+        // Leaderboard Calculation
+        function refreshLeaderboard() {
+            const tbody = document.getElementById("leaderboardBody");
+            tbody.innerHTML = "";
+
+            const studentMap = {};
+
+            // Initialize from registered users
+            for (let uname in allUsers) {
+                studentMap[uname] = {
+                    username: uname,
+                    school: allUsers[uname].school,
+                    name: allUsers[uname].name,
+                    levelScores: {},
+                    totalScore: 0,
+                    completedCount: 0
+                };
+            }
+
+            // Ingest scores
+            allScores.forEach(s => {
+                const uname = s.username;
+                const score = s.score;
+                const lvl = s.level;
+                
+                if (uname && studentMap[uname]) {
+                    const student = studentMap[uname];
+                    if (!student.levelScores[lvl] || score > student.levelScores[lvl]) {
+                        student.levelScores[lvl] = score;
+                    }
+                }
+            });
+
+            // Calculate aggregates
+            const list = [];
+            for (let uname in studentMap) {
+                const student = studentMap[uname];
+                let sum = 0;
+                let passed = 0;
+                for (let lvl in student.levelScores) {
+                    const maxScore = student.levelScores[lvl];
+                    sum += maxScore;
+                    if (maxScore >= 85) {
+                        passed++;
+                    }
+                }
+                student.totalScore = sum;
+                student.completedCount = passed;
+                
+                if (student.totalScore > 0) {
+                    list.push(student);
+                }
+            }
+
+            // Sort
+            list.sort((a, b) => {
+                if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
+                if (b.completedCount !== a.completedCount) return b.completedCount - a.completedCount;
+                return a.username.localeCompare(b.username);
+            });
+
+            // Filter
+            let filtered = list;
+            const mySchool = localStorage.getItem("game_user_school");
+            
+            if (currentFilter === "school") {
+                if (!mySchool) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 30px;">請先登入，方可查看您的校內排行</td></tr>`;
+                    return;
+                }
+                filtered = list.filter(s => s.school === mySchool);
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 30px;">尚無作答分數資料</td></tr>`;
+                return;
+            }
+
+            filtered.forEach((s, index) => {
+                const rank = index + 1;
+                let rankHtml = `<span class="rank-cell">${rank}</span>`;
+                if (rank === 1) rankHtml = `<span class="rank-cell rank-1">1</span>`;
+                else if (rank === 2) rankHtml = `<span class="rank-cell rank-2">2</span>`;
+                else if (rank === 3) rankHtml = `<span class="rank-cell rank-3">3</span>`;
+
+                const isMe = (s.username === localStorage.getItem("game_username"));
+                const tr = document.createElement("tr");
+                if (isMe) {
+                    tr.style.background = "rgba(79, 70, 229, 0.2)";
+                    tr.style.outline = "1.5px solid var(--primary)";
+                }
+                
+                tr.innerHTML = `
+                    <td style="display: flex; justify-content: center; align-items: center; border-bottom: none; height: 46px;">${rankHtml}</td>
+                    <td><b>${s.school}</b></td>
+                    <td><b>${s.name}</b></td>
+                    <td style="text-align: right; color: #fbbf24; font-weight: bold;">${s.totalScore} 分</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function switchTab(tab) {
+            currentFilter = tab;
+            document.getElementById("tabAll").className = `tab-btn ${tab === 'all' ? 'active' : ''}`;
+            document.getElementById("tabMySchool").className = `tab-btn ${tab === 'school' ? 'active' : ''}`;
+            refreshLeaderboard();
+        }
+
+        // Teacher password modal controls
+        function openTeacherLogin() {
+            if (localStorage.getItem("teacher_authenticated") === "true") {
+                window.location.href = "admin.html";
+            } else {
+                document.getElementById("passwordModal").style.display = "flex";
+                document.getElementById("passwordInput").value = "";
+                document.getElementById("passwordError").style.display = "none";
+                document.getElementById("passwordInput").focus();
+            }
+        }
+
+        function closePasswordModal() {
+            document.getElementById("passwordModal").style.display = "none";
+        }
+
+        function submitPassword() {
+            const pwd = document.getElementById("passwordInput").value;
+            if (pwd === "116") {
+                localStorage.setItem("teacher_authenticated", "true");
+                window.location.href = "admin.html";
+            } else {
+                document.getElementById("passwordError").style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>

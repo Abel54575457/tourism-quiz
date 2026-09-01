@@ -1,0 +1,11 @@
+# Office files & PDFs
+*.docx
+*.doc
+*.pdf
+*.ini
+desktop.ini
+
+# Python / Temp
+__pycache__/
+*.pyc
+scratch/

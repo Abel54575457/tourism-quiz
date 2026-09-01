@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>餐旅概論雲端闖關與檢測系統 - 遊戲</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Load Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    
+    <!-- Load Questions Database -->
+    <script src="questions.js"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --primary: #4f46e5;
+            --primary-glow: rgba(79, 70, 229, 0.4);
+            --success: #10b981;
+            --error: #ef4444;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, var(--bg-color) 80%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(16px);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 50px rgba(79, 70, 229, 0.1);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-align: center;
+            background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        /* User Banner */
+        .user-info-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 10px 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        /* Status & Progress */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 6px 14px;
+            border-radius: 30px;
+            color: #c7d2fe;
+        }
+
+        .score-badge {
+            color: #fbbf24;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #6366f1, #a5b4fc);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        /* Question Box */
+        .question-box {
+            margin-bottom: 30px;
+        }
+
+        .q-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        /* Choices Grid */
+        .choices-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .choice-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-main);
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .choice-btn:hover:not(.disabled) {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .choice-index {
+            width: 26px;
+            height: 26px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.85rem;
+            margin-right: 15px;
+            color: var(--text-muted);
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .choice-text {
+            flex: 1;
+        }
+
+        .choice-btn.correct {
+            background: rgba(16, 185, 129, 0.15) !important;
+            border-color: var(--success) !important;
+            color: #a7f3d0 !important;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .choice-btn.correct .choice-index {
+            background: var(--success);
+            color: white;
+        }
+
+        .choice-btn.incorrect {
+            background: rgba(239, 68, 68, 0.15) !important;
+            border-color: var(--error) !important;
+            color: #fca5a5 !important;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+        }
+
+        .choice-btn.incorrect .choice-index {
+            background: var(--error);
+            color: white;
+        }
+
+        /* Levels Grid */
+        .level-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .chapter-header {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #a5b4fc;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .level-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .level-card:hover:not(.locked) {
+            background: rgba(79, 70, 229, 0.1);
+            border-color: var(--primary);
+            transform: scale(1.01);
+        }
+
+        .level-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .level-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .level-btn {
+            background: var(--primary);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .level-card.locked {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* Buttons */
+        .action-btn {
+            background: var(--primary);
+            border: none;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px var(--primary-glow);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            background: #6366f1;
+            transform: translateY(-2px);
+        }
+
+        .action-btn-outline {
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-main);
+            box-shadow: none;
+        }
+
+        .action-btn-outline:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Results Screen */
+        .result-circle {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            border: 8px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 25px auto;
+        }
+
+        .result-score {
+            font-size: 3.2rem;
+            font-weight: 800;
+            line-height: 1.1;
+        }
+
+        .result-circle.pass {
+            border-color: rgba(16, 185, 129, 0.2);
+            background: rgba(16, 185, 129, 0.05);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
+        }
+        .result-circle.pass .result-score {
+            color: var(--success);
+        }
+
+        .result-circle.fail {
+            border-color: rgba(239, 68, 68, 0.2);
+            background: rgba(239, 68, 68, 0.05);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.1);
+        }
+        .result-circle.fail .result-score {
+            color: var(--error);
+        }
+
+        .result-comment {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Wrong Questions Review List */
+        .wrong-review-container {
+            margin-top: 25px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+            text-align: left;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .wrong-q-item {
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+
+        .wrong-q-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .wrong-q-detail {
+            font-size: 0.85rem;
+            color: #fca5a5;
+            margin-bottom: 6px;
+        }
+
+        .wrong-q-explanation {
+            font-size: 0.85rem;
+            color: #a7f3d0;
+            background: rgba(16, 185, 129, 0.08);
+            border-left: 3px solid var(--success);
+            padding: 8px;
+            margin-top: 8px;
+            border-radius: 0 6px 6px 0;
+        }
+
+        /* Modal Dialog */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #1e1b4b;
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            width: 90%;
+            max-width: 450px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .textarea-control {
+            width: 100%;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            outline: none;
+            resize: none;
+            margin-bottom: 15px;
+        }
+        .textarea-control:focus {
+            border-color: var(--primary);
+        }
+
+        /* Animations */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        .shake { animation: shake 0.3s ease; }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .bounce { animation: bounce 0.4s ease; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-card" id="gameCard">
+            <!-- Screen 1: Level Selector -->
+            <div id="levelScreen">
+                <div class="user-info-banner">
+                    <div>
+                        <span style="font-weight: bold; color: white;" id="userSchoolLabel">載校中...</span>
+                        <br>
+                        <span id="userNameLabel">載名中...</span>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="level-btn" style="padding: 6px 12px; background: transparent; border: 1px solid rgba(255,255,255,0.2);" onclick="logout()">登出</button>
+                    </div>
+                </div>
+                <h1>關卡選擇</h1>
+                <div class="subtitle">需獲得 85 分以上才能解鎖下一關</div>
+                
+                <div class="level-grid" id="levelGrid">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Screen 2: Game Board -->
+            <div id="gameScreen" style="display: none;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; margin-top: -10px; align-items: center;">
+                    <span style="font-size: 0.85rem; color: var(--error); cursor: pointer;" onclick="confirmExit()">🚪 暫時離開</span>
+                    <button class="level-btn" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5;" onclick="openReportModal()">🚩 問題回報</button>
+                </div>
+                
+                <div class="status-bar">
+                    <span class="badge" id="levelBadge">關卡 1</span>
+                    <span class="badge score-badge" id="scoreBadge">得分: 0 / 100</span>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+
+                <div class="question-box">
+                    <div class="q-text" id="questionText">問題載入中...</div>
+                </div>
+
+                <div class="choices-grid" id="choicesGrid">
+                    <!-- Choices -->
+                </div>
+            </div>
+
+            <!-- Screen 3: Result Screen -->
+            <div id="resultScreen" style="display: none;">
+                <h1 id="resultTitle">挑戰完成！</h1>
+                <div class="subtitle" id="resultSubtitle">關卡</div>
+                
+                <div class="result-circle" id="resultCircle">
+                    <span class="result-score" id="finalScore">0</span>
+                    <span style="font-size:0.8rem; color:var(--text-muted);">Points</span>
+                </div>
+
+                <div class="result-comment" id="resultComment">恭喜過關！</div>
+                
+                <button class="action-btn" id="nextLevelBtn">挑戰下一關</button>
+                <button class="action-btn action-btn-outline" onclick="showLevelScreen()">返回關卡選單</button>
+
+                <!-- Wrong Questions Explanations Review -->
+                <div class="wrong-review-container" id="wrongReviewContainer" style="display: none;">
+                    <h3 style="font-size: 1.05rem; font-weight: 800; color: #fca5a5; margin-bottom: 15px;">錯題解析與複習：</h3>
+                    <div id="wrongReviewList">
+                        <!-- Wrong items -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Modal -->
+    <div id="reportModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 10px; font-weight: 700; color: #fbbf24;">🚩 題目問題回報</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">若您發現此題有錯字、選項錯誤、答案不對等問題，請詳細說明以利管理員儘速核正：</p>
+            
+            <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--card-border); padding: 12px; border-radius: 12px; font-size: 0.85rem; margin-bottom: 15px; text-align: left; max-height: 100px; overflow-y: auto;">
+                <strong style="color: #a5b4fc;">當前題目：</strong>
+                <div id="reportQuestionPreview" style="color: white; margin-top: 4px;"></div>
+            </div>
+
+            <textarea id="reportDesc" class="textarea-control" placeholder="請描述題目或答案哪裡有問題..."></textarea>
+
+            <div style="display: flex; gap: 12px;">
+                <button onclick="closeReportModal()" class="btn" style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text-main); box-shadow: none;">取消</button>
+                <button onclick="submitReport()" class="btn" style="flex: 1; background: var(--primary);">送出回報</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Setup login guards
+        const username = localStorage.getItem("game_username");
+        const name = localStorage.getItem("game_user_name");
+        const school = localStorage.getItem("game_user_school");
+        let unlockedLevel = parseInt(localStorage.getItem("game_unlocked_level")) || 1;
+
+        if (!username || !name || !school) {
+            window.location.href = "index.html";
+        } else {
+            document.getElementById("userSchoolLabel").innerText = school;
+            document.getElementById("userNameLabel").innerText = `${name} (${username})`;
+        }
+
+        // Initialize Firebase
+        let db = null;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+            
+            // Sync unlocked level with Firebase real-time
+            db.ref(`users/${username}`).on('value', snapshot => {
+                const user = snapshot.val();
+                if (user && user.unlocked_level) {
+                    unlockedLevel = user.unlocked_level;
+                    localStorage.setItem("game_unlocked_level", unlockedLevel);
+                    // Update level view if not currently in game
+                    if (document.getElementById("levelScreen").style.display !== "none") {
+                        renderLevels();
+                    }
+                }
+            });
+        } catch (e) {
+            console.error("Firebase init failed", e);
+        }
+
+        // Global Game States
+        let currentLevel = null;
+        let currentQuestionIdx = 0;
+        let score = 0;
+        let userChoicesDisabled = false;
+        let wrongQuestions = []; // Stores wrong Qs for explanation review
+
+        // Chapters Mapping for Level Selection UI
+        const chapters = [
+            { id: 1, name: "第一章：觀光餐旅業概論", range: [1, 5], summary: 42 },
+            { id: 2, name: "第二章：從業人員條件與職業道德", range: [6, 7], summary: 43 },
+            { id: 3, name: "第三章：餐飲業概論", range: [8, 23], summary: 44 },
+            { id: 4, name: "第四章：旅館業概論", range: [24, 36], summary: 45 },
+            { id: 5, name: "第五章：旅行業概論", range: [37, 41], summary: 46 },
+            { id: 6, name: "學科總模擬測驗 (模擬考 1~5 回)", range: [47, 51] }
+        ];
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "index.html";
+        }
+
+        function confirmExit() {
+            if (confirm("您確定要暫時離開本關卡嗎？目前的答題進度將不會被儲存。")) {
+                document.getElementById("gameScreen").style.display = "none";
+                showLevelScreen();
+            }
+        }
+
+        function showLevelScreen() {
+            document.getElementById("levelScreen").style.display = "block";
+            document.getElementById("gameScreen").style.display = "none";
+            document.getElementById("resultScreen").style.display = "none";
+            renderLevels();
+        }
+
+        function renderLevels() {
+            const grid = document.getElementById("levelGrid");
+            grid.innerHTML = "";
+
+            chapters.forEach(ch => {
+                // Add Chapter Header
+                const header = document.createElement("div");
+                header.className = "chapter-header";
+                header.innerHTML = `<span>${ch.name}</span>`;
+                grid.appendChild(header);
+
+                // Add section levels
+                const [start, end] = ch.range;
+                for (let lvl = start; lvl <= end; lvl++) {
+                    createLevelCard(lvl, grid);
+                }
+
+                // Add Chapter Summary Exam if present
+                if (ch.summary) {
+                    createLevelCard(ch.summary, grid, true);
+                }
+            });
+        }
+
+        function createLevelCard(lvl, grid, isSummary = false) {
+            const data = levels[lvl];
+            if (!data) return;
+
+            const isLocked = lvl > unlockedLevel;
+            const card = document.createElement("div");
+            card.className = `level-card ${isLocked ? 'locked' : ''} ${isSummary ? 'summary-card' : ''}`;
+            
+            if (!isLocked) {
+                card.onclick = () => startLevel(lvl);
+            }
+
+            // Summary Exams styling
+            let badgeStyle = isSummary ? "background: rgba(251, 191, 36, 0.15); color: #fbbf24; border-color: rgba(251, 191, 36, 0.3);" : "";
+            if (lvl >= 47) {
+                // Mock exams
+                badgeStyle = "background: rgba(16, 185, 129, 0.15); color: #a7f3d0; border-color: rgba(16, 185, 129, 0.3);";
+            }
+
+            card.innerHTML = `
+                <div>
+                    <div class="level-name" style="${isSummary ? 'color: #fbbf24;' : ''}">${data.title}</div>
+                    <div class="level-meta">包含 20 題 • 範圍: ${data.pages} ${isLocked ? ' (🔒 需前一關達 85 分以上)' : ''}</div>
+                </div>
+                ${isLocked ? '<div style="font-size: 1.3rem;">🔒</div>' : `<button class="level-btn" style="${badgeStyle}">挑戰</button>`}
+            `;
+            grid.appendChild(card);
+        }
+
+        function startLevel(lvlId) {
+            currentLevel = lvlId;
+            currentQuestionIdx = 0;
+            score = 0;
+            userChoicesDisabled = false;
+            wrongQuestions = [];
+
+            document.getElementById("levelScreen").style.display = "none";
+            document.getElementById("gameScreen").style.display = "block";
+            document.getElementById("resultScreen").style.display = "none";
+
+            document.getElementById("levelBadge").innerText = levels[lvlId].title;
+            updateScoreBadge();
+            showQuestion();
+        }
+
+        function updateScoreBadge() {
+            document.getElementById("scoreBadge").innerText = `得分: ${score} / 100`;
+        }
+
+        function showQuestion() {
+            userChoicesDisabled = false;
+            const lvl = levels[currentLevel];
+            const q = lvl.questions[currentQuestionIdx];
+
+            // Progress bar
+            const progPct = (currentQuestionIdx / lvl.questions.length) * 100;
+            document.getElementById("progressBar").style.width = `${progPct}%`;
+
+            // Display question
+            document.getElementById("questionText").innerText = `${currentQuestionIdx + 1}. ${q.question}`;
+
+            // Render choices
+            const grid = document.getElementById("choicesGrid");
+            grid.innerHTML = "";
+
+            const indexLetters = ["A", "B", "C", "D"];
+            q.choices.forEach((choice, index) => {
+                const btn = document.createElement("button");
+                btn.className = "choice-btn";
+                btn.onclick = () => selectChoice(indexLetters[index], btn);
+                btn.innerHTML = `
+                    <span class="choice-index">${indexLetters[index]}</span>
+                    <span class="choice-text">${choice}</span>
+                `;
+                grid.appendChild(btn);
+            });
+        }
+
+        function selectChoice(selectedLetter, selectedBtn) {
+            if (userChoicesDisabled) return;
+            userChoicesDisabled = true;
+
+            const lvl = levels[currentLevel];
+            const q = lvl.questions[currentQuestionIdx];
+            const isCorrect = (selectedLetter === q.answer);
+
+            const buttons = document.querySelectorAll(".choice-btn");
+            buttons.forEach(btn => btn.classList.add("disabled"));
+
+            const card = document.getElementById("gameCard");
+
+            if (isCorrect) {
+                score += 5;
+                selectedBtn.classList.add("correct");
+                selectedBtn.classList.add("bounce");
+                updateScoreBadge();
+            } else {
+                selectedBtn.classList.add("incorrect");
+                card.classList.add("shake");
+                setTimeout(() => card.classList.remove("shake"), 300);
+
+                // Highlight the correct one
+                buttons.forEach(btn => {
+                    const idxNode = btn.querySelector(".choice-index");
+                    if (idxNode && idxNode.innerText === q.answer) {
+                        btn.classList.add("correct");
+                    }
+                });
+
+                // Save wrong question for post-game review
+                wrongQuestions.push({
+                    question: q.question,
+                    yourAnswer: selectedLetter,
+                    correctAnswer: q.answer,
+                    choices: q.choices,
+                    explanation: q.explanation
+                });
+            }
+
+            setTimeout(() => {
+                currentQuestionIdx++;
+                if (currentQuestionIdx < lvl.questions.length) {
+                    showQuestion();
+                } else {
+                    submitScore();
+                }
+            }, 1500);
+        }
+
+        function submitScore() {
+            if (db) {
+                // 1. Submit score log
+                db.ref("scores").push({
+                    username: username,
+                    school: school,
+                    name: name,
+                    level: currentLevel,
+                    score: score,
+                    completed_at: firebase.database.ServerValue.TIMESTAMP
+                });
+
+                // 2. Unlock next level if passed (>= 85)
+                if (score >= 85 && currentLevel === unlockedLevel) {
+                    const newUnlocked = unlockedLevel + 1;
+                    db.ref(`users/${username}`).update({
+                        unlocked_level: newUnlocked
+                    })
+                    .then(() => {
+                        unlockedLevel = newUnlocked;
+                        localStorage.setItem("game_unlocked_level", unlockedLevel);
+                        showResults(true);
+                    });
+                } else {
+                    showResults(score >= 85);
+                }
+            } else {
+                // Offline mode fallback
+                if (score >= 85 && currentLevel === unlockedLevel) {
+                    unlockedLevel++;
+                    localStorage.setItem("game_unlocked_level", unlockedLevel);
+                }
+                showResults(score >= 85);
+            }
+        }
+
+        function showResults(isPassed) {
+            document.getElementById("gameScreen").style.display = "none";
+            document.getElementById("resultScreen").style.display = "block";
+
+            document.getElementById("resultSubtitle").innerText = levels[currentLevel].title;
+            document.getElementById("finalScore").innerText = score;
+
+            const circle = document.getElementById("resultCircle");
+            const commentNode = document.getElementById("resultComment");
+            const nextBtn = document.getElementById("nextLevelBtn");
+
+            if (isPassed) {
+                circle.className = "result-circle pass";
+                document.getElementById("resultTitle").innerText = "挑戰成功！";
+                commentNode.innerText = "恭喜通過本關卡！已成功解鎖下一關！";
+                commentNode.style.color = "var(--success)";
+                
+                const totalLevels = Object.keys(levels).length;
+                if (currentLevel < totalLevels) {
+                    nextBtn.style.display = "block";
+                    nextBtn.innerText = `挑戰第 ${currentLevel + 1} 關`;
+                    nextBtn.onclick = () => startLevel(currentLevel + 1);
+                } else {
+                    nextBtn.style.display = "none";
+                }
+            } else {
+                circle.className = "result-circle fail";
+                document.getElementById("resultTitle").innerText = "挑戰失敗！";
+                commentNode.innerText = "未達 85 分，無法通過本關。請再接再厲！";
+                commentNode.style.color = "var(--error)";
+                
+                nextBtn.style.display = "block";
+                nextBtn.innerText = "重新挑戰本關";
+                nextBtn.onclick = () => startLevel(currentLevel);
+            }
+
+            // Render Wrong Questions Review
+            const wrongContainer = document.getElementById("wrongReviewContainer");
+            const wrongList = document.getElementById("wrongReviewList");
+            wrongList.innerHTML = "";
+
+            if (wrongQuestions.length > 0) {
+                wrongContainer.style.display = "block";
+                wrongQuestions.forEach(wq => {
+                    const item = document.createElement("div");
+                    item.className = "wrong-q-item";
+
+                    const letters = ["A", "B", "C", "D"];
+                    const yourAnsTxt = wq.choices[letters.indexOf(wq.yourAnswer)];
+                    const correctAnsTxt = wq.choices[letters.indexOf(wq.correctAnswer)];
+
+                    item.innerHTML = `
+                        <div class="wrong-q-title">${wq.question}</div>
+                        <div class="wrong-q-detail">❌ 您的答案：(${wq.yourAnswer}) ${yourAnsTxt}</div>
+                        <div class="wrong-q-detail" style="color: var(--success)">✅ 正確答案：(${wq.correctAnswer}) ${correctAnsTxt}</div>
+                        <div class="wrong-q-explanation">
+                            <strong>📖 考點解析：</strong><br>
+                            ${wq.explanation}
+                        </div>
+                    `;
+                    wrongList.appendChild(item);
+                });
+            } else {
+                wrongContainer.style.display = "none";
+            }
+        }
+
+        // Issue Reporting Modal Controls
+        function openReportModal() {
+            const q = levels[currentLevel].questions[currentQuestionIdx];
+            document.getElementById("reportQuestionPreview").innerText = q.question;
+            document.getElementById("reportDesc").value = "";
+            document.getElementById("reportModal").style.display = "flex";
+        }
+
+        function closeReportModal() {
+            document.getElementById("reportModal").style.display = "none";
+        }
+
+        function submitReport() {
+            const desc = document.getElementById("reportDesc").value.trim();
+            if (!desc) {
+                alert("請填寫回報內容！");
+                return;
+            }
+
+            if (db) {
+                const q = levels[currentLevel].questions[currentQuestionIdx];
+                db.ref("reports").push({
+                    username: username,
+                    school: school,
+                    name: name,
+                    level: currentLevel,
+                    level_title: levels[currentLevel].title,
+                    question: q.question,
+                    choices: q.choices,
+                    answer: q.answer,
+                    error_desc: desc,
+                    reported_at: firebase.database.ServerValue.TIMESTAMP
+                })
+                .then(() => {
+                    alert("回報成功！感謝您的協助，管理員會盡快處理。");
+                    closeReportModal();
+                })
+                .catch(err => {
+                    console.error("Report submit failed", err);
+                    alert("寫入資料庫失敗，請重試！");
+                });
+            } else {
+                alert("目前處於離線狀態，無法送出回報！");
+            }
+        }
+
+        // On Load Show Levels
+        window.onload = () => {
+            showLevelScreen();
+        };
+    </script>
+</body>
+</html>

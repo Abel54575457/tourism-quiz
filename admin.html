@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>餐旅概論雲端檢測系統 - 教師後台</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Load Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    
+    <!-- Load SheetJS for Excel Export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary: #4f46e5;
+            --primary-glow: rgba(79, 70, 229, 0.4);
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #fbbf24;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, var(--bg-color) 80%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .dashboard-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(16px);
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 50px rgba(79, 70, 229, 0.1);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px var(--primary-glow);
+        }
+
+        .search-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 10px 18px;
+            color: white;
+            font-size: 0.95rem;
+            width: 250px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-box:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn {
+            background: var(--primary);
+            border: none;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-success { background: var(--success); }
+        .btn-error { background: var(--error); }
+        .btn-warning { background: var(--warning); color: #000; }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.04);
+            color: #c7d2fe;
+            font-weight: 700;
+            padding: 16px 20px;
+            font-size: 0.95rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+        }
+
+        td {
+            padding: 14px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.95rem;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .progress-badge {
+            background: rgba(79, 70, 229, 0.15);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+            color: #a5b4fc;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+
+        /* Reports Section cards */
+        .reports-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .report-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .report-body {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 5px;">
+                <h1>餐旅概論雲端檢測系統 - 教師後台</h1>
+                <button onclick="logoutAdmin()" class="btn btn-error" style="padding: 6px 12px; font-size: 0.85rem;">退出後台</button>
+            </div>
+            <div class="subtitle">即時查看學生通關分數、管理問題回報與資料匯出</div>
+
+            <div class="controls">
+                <div class="tabs">
+                    <button class="tab-btn active" id="tabStudents" onclick="switchSection('students')">學生進度管理</button>
+                    <button class="tab-btn" id="tabReports" onclick="switchSection('reports')">題目問題回報 (<span id="reportsCount">0</span>)</button>
+                </div>
+                
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;" id="studentControls">
+                    <input type="text" class="search-box" id="searchBox" placeholder="搜尋學校或姓名..." oninput="filterData()">
+                    <button onclick="exportToExcel()" class="btn btn-success">📊 匯出 Excel</button>
+                </div>
+            </div>
+
+            <!-- SECTION 1: Students Progress Table -->
+            <div id="studentsSection">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 20%;">學校名稱</th>
+                                <th style="width: 15%;">帳號 (帳密)</th>
+                                <th style="width: 20%;">姓名 / 暱稱</th>
+                                <th style="width: 25%;">目前解鎖進度</th>
+                                <th style="width: 20%;">已通過關卡比例</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">等待資料載入中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION 2: Issue Reports List -->
+            <div id="reportsSection" style="display: none;">
+                <div class="reports-grid" id="reportsContainer">
+                    <div style="text-align: center; color: var(--text-muted); padding: 30px;">尚無回報紀錄</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Verify password immediately on load
+        (function() {
+            const auth = localStorage.getItem("teacher_authenticated");
+            if (auth !== "true") {
+                const password = prompt("請輸入教師管理密碼以進入後端：");
+                if (password === "116") {
+                    localStorage.setItem("teacher_authenticated", "true");
+                } else {
+                    alert("密碼錯誤，拒絕存取！");
+                    window.location.href = "index.html";
+                    throw new Error("Unauthorized access");
+                }
+            }
+        })();
+
+        function logoutAdmin() {
+            localStorage.removeItem("teacher_authenticated");
+            window.location.href = "index.html";
+        }
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAj1xkOZXY4tr2kSBgC1Om2uy_cjvdUncQ",
+            authDomain: "tourism-vocab-game.firebaseapp.com",
+            databaseURL: "https://tourism-vocab-game-default-rtdb.firebaseio.com",
+            projectId: "tourism-vocab-game",
+            storageBucket: "tourism-vocab-game.firebasestorage.app",
+            messagingSenderId: "208895481318",
+            appId: "1:208895481318:web:894ee572bbd5c14362b227",
+            measurementId: "G-SKLPH0K75S"
+        };
+
+        let db = null;
+        let activeSection = "students";
+        let rawUsers = {};
+        let rawScores = {};
+        let rawReports = {};
+
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+            
+            // Sync Database Realtime
+            db.ref().on('value', (snapshot) => {
+                const data = snapshot.val() || {};
+                rawUsers = data.users || {};
+                rawScores = data.scores || {};
+                rawReports = data.reports || {};
+                
+                renderStudentsTable();
+                renderReports();
+            }, (err) => {
+                console.error("Firebase read error", err);
+            });
+        } catch (e) {
+            console.error("Firebase init failed", e);
+        }
+
+        function switchSection(sec) {
+            activeSection = sec;
+            document.getElementById("tabStudents").className = `tab-btn ${sec === 'students' ? 'active' : ''}`;
+            document.getElementById("tabReports").className = `tab-btn ${sec === 'reports' ? 'active' : ''}`;
+            
+            if (sec === "students") {
+                document.getElementById("studentsSection").style.display = "block";
+                document.getElementById("reportsSection").style.display = "none";
+                document.getElementById("studentControls").style.display = "flex";
+            } else {
+                document.getElementById("studentsSection").style.display = "none";
+                document.getElementById("reportsSection").style.display = "block";
+                document.getElementById("studentControls").style.display = "none";
+            }
+        }
+
+        function filterData() {
+            renderStudentsTable();
+        }
+
+        // Render Student Progress Table
+        function renderStudentsTable() {
+            const tbody = document.getElementById("studentTableBody");
+            tbody.innerHTML = "";
+
+            const searchQuery = document.getElementById("searchBox").value.trim().toLowerCase();
+
+            // Total levels in game is 51
+            const TOTAL_LEVELS = 51;
+
+            let rowCount = 0;
+            for (let uname in rawUsers) {
+                const user = rawUsers[uname];
+                const name = user.name || "";
+                const school = user.school || "";
+                const unlocked = user.unlocked_level || 1;
+
+                // Search Filter
+                if (searchQuery && !name.toLowerCase().includes(searchQuery) && !school.toLowerCase().includes(searchQuery) && !uname.toLowerCase().includes(searchQuery)) {
+                    continue;
+                }
+
+                rowCount++;
+                const tr = document.createElement("tr");
+
+                const passedCount = unlocked - 1;
+                const completionPct = Math.round((passedCount / TOTAL_LEVELS) * 100);
+
+                tr.innerHTML = `
+                    <td><b>${school}</b></td>
+                    <td><span style="font-family: monospace;">${uname}</span> <br><small style="color:var(--text-muted);">PW: ${user.password}</small></td>
+                    <td><b>${name}</b></td>
+                    <td><span class="progress-badge">已解鎖第 ${unlocked} 關</span></td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
+                                <div style="width: ${completionPct}%; height: 100%; background: linear-gradient(90deg, #10b981, #34d399); border-radius: 4px;"></div>
+                            </div>
+                            <span style="font-size: 0.85rem; font-weight: bold; min-width: 60px;">${passedCount} / ${TOTAL_LEVELS} 關</span>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            if (rowCount === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">未找到匹配的學生資料</td></tr>`;
+            }
+        }
+
+        // Render Issue Reports
+        function renderReports() {
+            const container = document.getElementById("reportsContainer");
+            container.innerHTML = "";
+
+            const reportsCountNode = document.getElementById("reportsCount");
+            
+            const reportsList = [];
+            for (let id in rawReports) {
+                reportsList.push({ id: id, ...rawReports[id] });
+            }
+
+            // Sort by reported time descending
+            reportsList.sort((a,b) => b.reported_at - a.reported_at);
+            reportsCountNode.innerText = reportsList.length;
+
+            if (reportsList.length === 0) {
+                container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 30px;">尚無回報紀錄</div>`;
+                return;
+            }
+
+            reportsList.forEach(rep => {
+                const card = document.createElement("div");
+                card.className = "report-card";
+
+                const dateStr = new Date(rep.reported_at).toLocaleString();
+
+                const indexLetters = ["A", "B", "C", "D"];
+                const choicesText = rep.choices ? rep.choices.map((c, i) => `(${indexLetters[i]}) ${c}`).join(" ") : "";
+
+                card.innerHTML = `
+                    <div class="report-header">
+                        <div>
+                            <span style="background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; margin-right: 8px; font-weight: bold;">${rep.level_title}</span>
+                            <strong>${rep.school} - ${rep.name} (${rep.username})</strong>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">${dateStr}</span>
+                            <button onclick="deleteReport('${rep.id}')" class="btn btn-error" style="padding: 4px 10px; font-size: 0.75rem;">解決/刪除</button>
+                        </div>
+                    </div>
+                    <div class="report-body">
+                        <div>
+                            <strong style="color: #a5b4fc;">題目內容：</strong>
+                            <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 5px;">
+                                <div>${rep.question}</div>
+                                <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">${choicesText}</div>
+                                <div style="color: var(--success); font-size: 0.85rem; margin-top: 4px;">正確答案標記為：(${rep.answer})</div>
+                            </div>
+                        </div>
+                        <div>
+                            <strong style="color: #fca5a5;">學生描述的問題：</strong>
+                            <div style="background: rgba(239, 68, 68, 0.08); border-left: 3px solid var(--error); padding: 10px; border-radius: 0 8px 8px 0; margin-top: 5px; color: white;">
+                                ${rep.error_desc}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function deleteReport(reportId) {
+            if (confirm("您確定要刪除這筆回報紀錄嗎？")) {
+                if (db) {
+                    db.ref(`reports/${reportId}`).remove()
+                    .catch(err => {
+                        console.error("Delete report failed", err);
+                    });
+                }
+            }
+        }
+
+        // Export data to Excel
+        function exportToExcel() {
+            if (typeof XLSX === 'undefined') {
+                alert("Excel 匯出元件載入中，請稍後再試！");
+                return;
+            }
+
+            const scoreList = [];
+            for (let id in rawScores) {
+                scoreList.push(rawScores[id]);
+            }
+
+            const excelData = [];
+            
+            // Header Row
+            const headers = ["學校名稱", "帳號", "姓名/暱稱", "目前解鎖進度"];
+            const TOTAL_LEVELS = 51;
+            for (let l = 1; l <= TOTAL_LEVELS; l++) {
+                headers.push(`第 ${l} 關最高分`);
+            }
+            excelData.push(headers);
+
+            // Populate Student Rows
+            for (let uname in rawUsers) {
+                const user = rawUsers[uname];
+                const name = user.name || "";
+                const school = user.school || "";
+                const unlocked = user.unlocked_level || 1;
+
+                const row = [
+                    school,
+                    uname,
+                    name,
+                    `已解鎖第 ${unlocked} 關`
+                ];
+
+                // Find max score for each level 1-51
+                for (let l = 1; l <= TOTAL_LEVELS; l++) {
+                    const lvlScores = scoreList
+                        .filter(s => s.username === uname && s.level === l)
+                        .map(s => s.score);
+                    
+                    if (lvlScores.length > 0) {
+                        row.push(Math.max(...lvlScores));
+                    } else {
+                        row.push(""); // Blank if not attempted
+                    }
+                }
+                excelData.push(row);
+            }
+
+            const worksheet = XLSX.utils.aoa_to_sheet(excelData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "學生最高小考成績");
+            
+            XLSX.writeFile(workbook, "餐旅概論學生小考最高成績表.xlsx");
+        }
+    </script>
+</body>
+</html>
