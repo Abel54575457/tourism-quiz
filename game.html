@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>餐旅概論 - 闖關與全真檢測</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
@@ -10,8 +13,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     
-    <!-- Load Question Database -->
-    <script src="questions.js"></script>
+    <!-- Load Question Database with cache-busting parameter -->
+    <script src="questions.js?v=20260901_final"></script>
 
     <style>
         /* ================= THEME DEFINITIONS ================= */
@@ -32,7 +35,7 @@
             --modal-bg: #ffffff;
             --choice-bg: rgba(241, 245, 249, 0.9);
             --choice-border: rgba(203, 213, 225, 0.9);
-            --chapter-header-bg: linear-gradient(135deg, rgba(224, 231, 255, 0.8), rgba(241, 245, 249, 0.9));
+            --chapter-header-bg: linear-gradient(135deg, rgba(224, 231, 255, 0.85), rgba(241, 245, 249, 0.95));
         }
 
         [data-theme="midnight"] {
@@ -586,18 +589,16 @@
 
             <!-- VIEW 1: Level Selection Map -->
             <div id="levelSelectView">
-                <div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+                <div style="margin-bottom: 22px; display: flex; align-items: center; justify-content: space-between;">
                     <div>
-                        <strong style="font-size: 1.1rem;">🗺️ 關卡地圖 (每關 20 題，85 分過關解鎖下一關)</strong>
-                        <div style="font-size: 0.82rem; color: var(--text-muted);">點選已解鎖關卡即可直接開始測驗</div>
+                        <strong style="font-size: 1.15rem; color: var(--text-main);">🗺️ 51 關卡完整地圖 (滿 85 分過關並解鎖下一關)</strong>
+                        <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">點選以下已解鎖的關卡即可直接開始測驗</div>
                     </div>
                 </div>
 
                 <!-- Chapters Section Hierarchy -->
                 <div id="chaptersContainer">
-                    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
-                        關卡載入中，請稍候...
-                    </div>
+                    <!-- Populated dynamically via JS -->
                 </div>
             </div>
 
@@ -676,7 +677,7 @@
     </div>
 
     <script>
-        // Theme Management - Default to 'light' (White theme)
+        // Theme Management - Default to 'light'
         function setTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
             localStorage.setItem('game_theme', theme);
@@ -838,7 +839,6 @@
             });
         }
 
-        // Initialize grid immediately and on DOM load
         renderChapterGrid();
         window.addEventListener("load", renderChapterGrid);
 

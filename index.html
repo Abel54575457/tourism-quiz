@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>餐旅概論雲端闖關與檢測系統 - 入口</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
@@ -548,7 +551,7 @@
     </div>
 
     <script>
-        // Theme Management - Default to 'light' (White theme)
+        // Theme Management - Default to 'light'
         function setTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
             localStorage.setItem('game_theme', theme);
@@ -777,7 +780,8 @@
             localStorage.setItem("game_user_name", name);
             localStorage.setItem("game_user_school", school);
             localStorage.setItem("game_unlocked_level", unlockedLevel);
-            window.location.href = "game.html";
+            // Cache buster
+            window.location.href = "game.html?t=" + Date.now();
         }
 
         function refreshLeaderboard() {
