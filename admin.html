@@ -352,6 +352,11 @@
             flex-wrap: wrap;
             gap: 10px;
         }
+        @keyframes pulseAlert {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { transform: scale(1.008); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
     </style>
 </head>
 <body>
@@ -375,6 +380,20 @@
                 </div>
             </div>
             <div class="subtitle">即時掌握全台學生通關進度、管理題目爭議回報與匯出 Excel 成績報表</div>
+
+            <!-- Prominent Pending Reports Alert Banner -->
+            <div id="pendingReportsBanner" style="display: none; background: linear-gradient(135deg, rgba(239,68,68,0.12), rgba(245,158,11,0.15)); border: 2px solid var(--warning); padding: 18px 22px; border-radius: 18px; margin-top: 15px; margin-bottom: 25px; animation: pulseAlert 2.5s infinite ease-in-out; cursor: pointer;" onclick="switchSection('reports')">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <span style="font-size: 2.2rem;">🚨</span>
+                        <div>
+                            <h3 style="color: var(--error); font-weight: 900; margin: 0; font-size: 1.15rem;">待處理提醒：目前系統中有 <span id="bannerReportCount" style="text-decoration: underline; font-size: 1.3rem;">0</span> 筆學生提交的題目問題回報！</h3>
+                            <p style="color: var(--text-main); font-size: 0.9rem; margin: 4px 0 0 0;">請點擊此處立即查看學生回報之題目疑義、錯字或答案爭議，並進行核對修改。</p>
+                        </div>
+                    </div>
+                    <button class="btn" style="background: var(--error); color: #fff; font-weight: 800; padding: 10px 18px; font-size: 0.9rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(220,38,38,0.3);">👉 立即進入審核處理</button>
+                </div>
+            </div>
 
             <!-- Stats Overview Cards -->
             <div class="stats-grid">
@@ -592,6 +611,8 @@
             container.innerHTML = "";
 
             const reportsCountNode = document.getElementById("reportsCount");
+            const banner = document.getElementById("pendingReportsBanner");
+            const bannerCountNode = document.getElementById("bannerReportCount");
             
             const reportsList = [];
             for (let id in rawReports) {
@@ -601,8 +622,17 @@
             reportsList.sort((a,b) => b.reported_at - a.reported_at);
             reportsCountNode.innerText = reportsList.length;
 
+            if (banner && bannerCountNode) {
+                if (reportsList.length > 0) {
+                    banner.style.display = "block";
+                    bannerCountNode.innerText = reportsList.length;
+                } else {
+                    banner.style.display = "none";
+                }
+            }
+
             if (reportsList.length === 0) {
-                container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 30px;">目前尚無待處理之題目回報 🎉</div>`;
+                container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px; font-size: 1.05rem;">🎉 太棒了！目前尚無待處理之題目回報。</div>`;
                 return;
             }
 
@@ -610,33 +640,34 @@
                 const card = document.createElement("div");
                 card.className = "report-card";
 
-                const dateStr = new Date(rep.reported_at).toLocaleString();
+                const dateStr = new Date(rep.reported_at).toLocaleString('zh-TW');
                 const indexLetters = ["A", "B", "C", "D"];
-                const choicesText = rep.choices ? rep.choices.map((c, i) => `(${indexLetters[i]}) ${c}`).join(" ") : "";
+                const choicesText = rep.choices ? rep.choices.map((c, i) => `(${indexLetters[i]}) ${c}`).join("　") : "";
 
                 card.innerHTML = `
                     <div class="report-header">
                         <div>
-                            <span style="background: rgba(217,119,6,0.12); color: var(--warning); border: 1px solid rgba(217,119,6,0.3); padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; margin-right: 8px; font-weight: bold;">${rep.level_title}</span>
+                            <span style="background: rgba(217,119,6,0.12); color: var(--warning); border: 1px solid rgba(217,119,6,0.3); padding: 4px 10px; border-radius: 8px; font-size: 0.82rem; margin-right: 8px; font-weight: bold;">${rep.level_title || `第 ${rep.level} 關`}</span>
                             <strong>${rep.school} - ${rep.name} (${rep.username})</strong>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                             <span style="font-size: 0.8rem; color: var(--text-muted);">${dateStr}</span>
-                            <button onclick="deleteReport('${rep.id}')" class="btn btn-error" style="padding: 5px 12px; font-size: 0.78rem;">✓ 解決並刪除</button>
+                            <button onclick="copyReportInfo('${encodeURIComponent(JSON.stringify(rep))}')" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.78rem;">📋 複製題目資訊</button>
+                            <button onclick="deleteReport('${rep.id}')" class="btn btn-error" style="padding: 5px 12px; font-size: 0.78rem;">✓ 標記已修正並結案</button>
                         </div>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.92rem; line-height: 1.5;">
+                    <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.92rem; line-height: 1.5;">
                         <div>
-                            <strong style="color: var(--primary);">題目內容：</strong>
-                            <div style="background: var(--input-bg); border: 1px solid var(--card-border); padding: 12px; border-radius: 10px; margin-top: 5px;">
-                                <div>${rep.question}</div>
-                                <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 6px;">${choicesText}</div>
-                                <div style="color: var(--success); font-size: 0.85rem; margin-top: 4px; font-weight: bold;">正確答案標記為：(${rep.answer})</div>
+                            <strong style="color: var(--primary);">📖 題目與選項內容：</strong>
+                            <div style="background: var(--input-bg); border: 1px solid var(--card-border); padding: 14px; border-radius: 12px; margin-top: 6px;">
+                                <div style="font-weight: bold; font-size: 0.95rem; margin-bottom: 6px;">${rep.question}</div>
+                                <div style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 6px;">${choicesText}</div>
+                                <div style="color: var(--success); font-size: 0.88rem; font-weight: bold;">目前系統標準答案為：(${rep.answer})</div>
                             </div>
                         </div>
                         <div>
-                            <strong style="color: var(--error);">學生描述的問題：</strong>
-                            <div style="background: rgba(220, 38, 38, 0.08); border-left: 3px solid var(--error); padding: 10px 14px; border-radius: 0 10px 10px 0; margin-top: 5px; color: var(--text-main);">
+                            <strong style="color: var(--error);">🚨 學生回報之問題描述 / 爭議建議：</strong>
+                            <div style="background: rgba(220, 38, 38, 0.08); border-left: 4px solid var(--error); padding: 12px 16px; border-radius: 0 12px 12px 0; margin-top: 6px; color: var(--text-main); font-weight: 500;">
                                 ${rep.error_desc}
                             </div>
                         </div>
@@ -644,6 +675,18 @@
                 `;
                 container.appendChild(card);
             });
+        }
+
+        function copyReportInfo(encodedRep) {
+            try {
+                const rep = JSON.parse(decodeURIComponent(encodedRep));
+                const textToCopy = `【題目問題回報】\n關卡：${rep.level_title}\n題目：${rep.question}\n目前答案：(${rep.answer})\n學生說明：${rep.error_desc}`;
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    alert("已複製題目回報詳細資訊至剪貼簿！方便您核對修改題庫。");
+                });
+            } catch(e) {
+                console.error(e);
+            }
         }
 
         function deleteReport(reportId) {

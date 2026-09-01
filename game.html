@@ -13,6 +13,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     
+    <!-- Load html2pdf for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
     <!-- Load Question Database with cache-busting parameter -->
     <script src="questions.js?v=20260901_final"></script>
 
@@ -641,6 +644,7 @@
                     <button onclick="restartLevel()" class="btn btn-outline">🔄 再次挑戰</button>
                     <button id="nextLevelBtn" onclick="goToNextLevel()" class="btn" style="background: var(--success);">⭐ 前往下一關</button>
                     <button onclick="exitToLevelSelect()" class="btn">🗺️ 回關卡地圖</button>
+                    <button onclick="exportResultPDF()" class="btn" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);">📥 下載錯題解析 PDF</button>
                 </div>
 
                 <!-- Wrong Questions Review List -->
@@ -998,6 +1002,124 @@
                 });
             } else {
                 wrongSection.style.display = "none";
+            }
+        }
+
+        function exportResultPDF() {
+            const levelData = levels[String(currentLevel)] || { title: `第 ${currentLevel} 關` };
+            const dateStr = new Date().toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+            const keys = ["A", "B", "C", "D"];
+            const isPerfect = (wrongQuestions.length === 0);
+
+            const pdfContainer = document.createElement("div");
+            pdfContainer.id = "pdfExportWrapper";
+            pdfContainer.style.padding = "25px 30px";
+            pdfContainer.style.fontFamily = "'Noto Sans TC', 'Microsoft JhengHei', sans-serif";
+            pdfContainer.style.color = "#1e293b";
+            pdfContainer.style.backgroundColor = "#ffffff";
+            pdfContainer.style.lineHeight = "1.6";
+
+            let questionsHtml = "";
+
+            if (isPerfect) {
+                questionsHtml = `
+                    <div style="background: #ecfdf5; border: 2px solid #059669; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 25px;">
+                        <h3 style="color: #047857; margin: 0 0 8px 0; font-size: 20px;">🎉 恭喜！本次測驗榮獲 100 分滿分！</h3>
+                        <p style="color: #065f46; margin: 0; font-size: 14px;">全部 20 題全數正確回答，觀念清晰紮實！以下為本單元完整題庫與重點回顧：</p>
+                    </div>
+                `;
+                currentQuestionsList.forEach((q, idx) => {
+                    const optStrings = (q.options || q.choices).map((o, optIdx) => `(${keys[optIdx]}) ${o}`).join("　");
+                    questionsHtml += `
+                        <div style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; background: #fafafa; page-break-inside: avoid;">
+                            <div style="font-weight: bold; font-size: 14px; color: #0f172a; margin-bottom: 6px;">第 ${idx + 1} 題：${q.q || q.question}</div>
+                            <div style="font-size: 12.5px; color: #64748b; margin-bottom: 8px;">${optStrings}</div>
+                            <div style="display: inline-block; background: #dcfce7; color: #166534; font-weight: bold; font-size: 12px; padding: 2px 8px; border-radius: 6px; margin-bottom: 8px;">
+                                正確答案：(${q.ans || q.answer})
+                            </div>
+                            <div style="background: #ffffff; border-left: 3px solid #4f46e5; padding: 8px 12px; font-size: 12px; color: #334155; border-radius: 0 6px 6px 0;">
+                                <strong>💡 考點解析：</strong> ${q.exp || q.explanation || "掌握關鍵定義即可正確作答。"}
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                questionsHtml = `
+                    <div style="background: #fffbeb; border: 2px solid #d97706; border-radius: 12px; padding: 16px; margin-bottom: 25px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="color: #92400e; font-size: 16px;">本次測驗錯題清單（共 ${wrongQuestions.length} 題，需特別加強複習）</strong>
+                            <span style="background: #d97706; color: #ffffff; font-size: 12px; font-weight: bold; padding: 3px 10px; border-radius: 20px;">錯題複習專刊</span>
+                        </div>
+                    </div>
+                `;
+                wrongQuestions.forEach((wq, idx) => {
+                    const optStrings = wq.options.map((o, optIdx) => `(${keys[optIdx]}) ${o}`).join("　");
+                    questionsHtml += `
+                        <div style="border: 1px solid #cbd5e1; border-radius: 10px; padding: 16px; margin-bottom: 16px; background: #ffffff; page-break-inside: avoid; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                            <div style="font-weight: bold; font-size: 14px; color: #0f172a; margin-bottom: 8px;">錯題 ${idx + 1}：${wq.q}</div>
+                            <div style="font-size: 13px; color: #475569; margin-bottom: 10px; line-height: 1.5;">${optStrings}</div>
+                            <div style="display: flex; gap: 12px; margin-bottom: 10px; font-size: 12.5px; font-weight: bold;">
+                                <span style="background: #fee2e2; color: #991b1b; padding: 3px 10px; border-radius: 6px; border: 1px solid #fca5a5;">您的答案：(${wq.userAns}) ❌</span>
+                                <span style="background: #dcfce7; color: #166534; padding: 3px 10px; border-radius: 6px; border: 1px solid #86efac;">標準正確答案：(${wq.correctAns}) ✔️</span>
+                            </div>
+                            <div style="background: #f8fafc; border-left: 4px solid #4f46e5; padding: 10px 14px; font-size: 12.5px; color: #1e293b; border-radius: 0 8px 8px 0; line-height: 1.6;">
+                                <strong style="color: #4338ca;">💡 老師精闢考點解析：</strong> ${wq.exp}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            pdfContainer.innerHTML = `
+                <div style="border-bottom: 2px solid #4f46e5; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end;">
+                    <div>
+                        <h1 style="color: #1e1b4b; font-size: 22px; margin: 0 0 6px 0; font-weight: 900;">🎓 觀光餐旅概論 - 隨堂評量錯題檢討與解析講義</h1>
+                        <div style="color: #64748b; font-size: 13px;">雲端智能互動小考系統・教育部課綱標準餐旅概論題庫</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="display: inline-block; background: #4f46e5; color: #ffffff; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">評量學習單</span>
+                    </div>
+                </div>
+
+                <div style="background: #f1f5f9; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; font-size: 13px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div><strong>🏫 學校單位：</strong> ${currentUser.school || "全國高中職"}</div>
+                    <div><strong>👤 學生姓名：</strong> ${currentUser.name || currentUser.username} (${currentUser.username})</div>
+                    <div><strong>📖 測驗單元：</strong> ${levelData.title}</div>
+                    <div><strong>📅 產生日期：</strong> ${dateStr}</div>
+                    <div><strong>🏆 測驗成績：</strong> <span style="font-size: 16px; font-weight: 900; color: ${score >= 85 ? '#059669' : '#dc2626'};">${score} 分</span> (${score >= 85 ? '通過標準' : '未達 85 分'})</div>
+                    <div><strong>📊 錯題統計：</strong> 答錯 ${wrongQuestions.length} 題 / 共 20 題</div>
+                </div>
+
+                ${questionsHtml}
+
+                <div style="margin-top: 30px; border-top: 1px dashed #cbd5e1; padding-top: 15px; text-align: center; color: #94a3b8; font-size: 11px;">
+                    ※ 本教材解析講義由「觀光餐旅概論雲端測驗系統」自動生成・僅供學生學習與課後複習使用
+                </div>
+            `;
+
+            document.body.appendChild(pdfContainer);
+
+            const filename = `餐旅概論錯題解析_第${currentLevel}關_${currentUser.name || currentUser.username}.pdf`;
+
+            if (typeof html2pdf !== 'undefined') {
+                const opt = {
+                    margin:       [10, 10, 10, 10],
+                    filename:     filename,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true },
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                html2pdf().set(opt).from(pdfContainer).save().then(() => {
+                    document.body.removeChild(pdfContainer);
+                }).catch(err => {
+                    console.error("html2pdf failed, fallback to print", err);
+                    document.body.removeChild(pdfContainer);
+                    window.print();
+                });
+            } else {
+                window.print();
+                document.body.removeChild(pdfContainer);
             }
         }
 
