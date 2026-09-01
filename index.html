@@ -829,15 +829,14 @@
                 student.totalScore = sum;
                 student.completedCount = passed;
                 
-                if (student.totalScore > 0) {
-                    list.push(student);
-                }
+                // Include all registered students on leaderboard
+                list.push(student);
             }
 
             list.sort((a, b) => {
                 if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
                 if (b.completedCount !== a.completedCount) return b.completedCount - a.completedCount;
-                return a.username.localeCompare(b.username);
+                return (a.name || a.username).localeCompare(b.name || b.username, 'zh-Hant');
             });
 
             let filtered = list;
@@ -852,16 +851,20 @@
             }
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 30px;">尚無作答分數資料</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 30px;">尚無學生註冊與作答資料</td></tr>`;
                 return;
             }
 
             filtered.forEach((s, index) => {
                 const rank = index + 1;
                 let rankHtml = `<span class="rank-cell">${rank}</span>`;
-                if (rank === 1) rankHtml = `<span class="rank-cell rank-1">1</span>`;
-                else if (rank === 2) rankHtml = `<span class="rank-cell rank-2">2</span>`;
-                else if (rank === 3) rankHtml = `<span class="rank-cell rank-3">3</span>`;
+                if (s.totalScore > 0) {
+                    if (rank === 1) rankHtml = `<span class="rank-cell rank-1">1</span>`;
+                    else if (rank === 2) rankHtml = `<span class="rank-cell rank-2">2</span>`;
+                    else if (rank === 3) rankHtml = `<span class="rank-cell rank-3">3</span>`;
+                } else {
+                    rankHtml = `<span class="rank-cell" style="background: var(--surface-hover); color: var(--text-muted); border-color: transparent;">-</span>`;
+                }
 
                 const isMe = (s.username === localStorage.getItem("game_username"));
                 const tr = document.createElement("tr");
@@ -869,12 +872,16 @@
                     tr.style.background = "rgba(79, 70, 229, 0.08)";
                     tr.style.outline = "1.5px solid var(--primary)";
                 }
+
+                const scoreDisplay = s.totalScore > 0 
+                    ? `<span style="color: var(--primary); font-weight: 800;">${s.totalScore} 分</span>`
+                    : `<span style="color: var(--text-muted); font-size: 0.82rem;">0 分 (新註冊)</span>`;
                 
                 tr.innerHTML = `
                     <td style="display: flex; justify-content: center; align-items: center; border-bottom: none; height: 44px;">${rankHtml}</td>
-                    <td><b>${s.school}</b></td>
-                    <td><b>${s.name}</b></td>
-                    <td style="text-align: right; color: var(--primary); font-weight: 800;">${s.totalScore} 分</td>
+                    <td><b>${s.school || "未填寫"}</b></td>
+                    <td><b>${s.name || s.username}</b></td>
+                    <td style="text-align: right;">${scoreDisplay}</td>
                 `;
                 tbody.appendChild(tr);
             });
