@@ -546,7 +546,7 @@
             tbody.innerHTML = "";
 
             const searchQuery = document.getElementById("searchBox").value.trim().toLowerCase();
-            const TOTAL_LEVELS = 51;
+            const TOTAL_LEVELS = 32;
 
             let rowCount = 0;
             for (let uname in rawUsers) {
@@ -668,7 +668,7 @@
 
             const excelData = [];
             const headers = ["學校名稱", "帳號", "姓名/暱稱", "目前解鎖進度"];
-            const TOTAL_LEVELS = 51;
+            const TOTAL_LEVELS = 32;
             for (let l = 1; l <= TOTAL_LEVELS; l++) {
                 headers.push(`第 ${l} 關最高分`);
             }

@@ -754,12 +754,12 @@
 
         // Chapter Group Definitions for UI
         const chapterGroups = [
-            { title: "第 1 章：觀光餐旅業導論與基本概念", icon: "📖", range: [1, 9], summaryExamLevel: 42 },
-            { title: "第 2 章：觀光餐旅從業人員與職業道德", icon: "👔", range: [10, 15], summaryExamLevel: 43 },
-            { title: "第 3 章：餐飲業概論與營運管理", icon: "🍳", range: [16, 26], summaryExamLevel: 44 },
-            { title: "第 4 章：旅館業概論與客房客務", icon: "🏨", range: [27, 34], summaryExamLevel: 45 },
-            { title: "第 5 章：旅行業概論與遊程規劃", icon: "✈️", range: [35, 41], summaryExamLevel: 46 },
-            { title: "🎯 全真歷屆跨章節綜合模擬測驗", icon: "🎓", range: [47, 51], summaryExamLevel: null }
+            { title: "第 1 章：觀光餐旅業導論與基本概念", icon: "📖", range: [1, 5], summaryExamLevel: 23 },
+            { title: "第 2 章：觀光餐旅從業人員與職業道德", icon: "👔", range: [6, 7], summaryExamLevel: 24 },
+            { title: "第 3 章：餐飲業概論與營運管理", icon: "🍳", range: [8, 14], summaryExamLevel: 25 },
+            { title: "第 4 章：旅館業概論與客房客務", icon: "🏨", range: [15, 19], summaryExamLevel: 26 },
+            { title: "第 5 章：旅行業概論與遊程規劃", icon: "✈️", range: [20, 22], summaryExamLevel: 27 },
+            { title: "🎯 全真歷屆跨章節綜合模擬測驗", icon: "🎓", range: [28, 32], summaryExamLevel: null }
         ];
 
         function getLevelData(lvl) {
@@ -793,7 +793,7 @@
                     const card = document.createElement("div");
                     const isLocked = (l > currentUser.unlockedLevel);
                     const isPassed = (l < currentUser.unlockedLevel);
-                    const isMock = (l >= 47);
+                    const isMock = (l >= 28);
 
                     card.className = `level-card ${isLocked ? 'locked' : ''} ${isPassed ? 'passed' : ''} ${isMock ? 'mock-exam' : ''}`;
                     
@@ -941,7 +941,7 @@
                 subtext.innerText = `獲得 ${score} 分，順利解鎖下一關！`;
                 nextBtn.style.display = "inline-flex";
 
-                if (currentLevel >= currentUser.unlockedLevel && currentUser.unlockedLevel < 51) {
+                if (currentLevel >= currentUser.unlockedLevel && currentUser.unlockedLevel < 32) {
                     const nextUnlock = currentLevel + 1;
                     currentUser.unlockedLevel = nextUnlock;
                     localStorage.setItem("game_unlocked_level", nextUnlock);
@@ -1006,7 +1006,7 @@
         }
 
         function goToNextLevel() {
-            if (currentLevel < 51) {
+            if (currentLevel < 32) {
                 startLevel(currentLevel + 1);
             } else {
                 exitToLevelSelect();
