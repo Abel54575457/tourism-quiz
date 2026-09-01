@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +15,27 @@
 
     <style>
         /* ================= THEME DEFINITIONS ================= */
-        :root, [data-theme="midnight"] {
+        :root, [data-theme="light"] {
+            --bg-gradient: radial-gradient(circle at 50% 15%, #e2e8f0 0%, #f8fafc 85%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(99, 102, 241, 0.2);
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-glow: rgba(79, 70, 229, 0.25);
+            --success: #059669;
+            --error: #dc2626;
+            --warning: #d97706;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --surface-hover: rgba(79, 70, 229, 0.05);
+            --input-bg: #ffffff;
+            --modal-bg: #ffffff;
+            --choice-bg: rgba(241, 245, 249, 0.9);
+            --choice-border: rgba(203, 213, 225, 0.9);
+            --chapter-header-bg: linear-gradient(135deg, rgba(224, 231, 255, 0.8), rgba(241, 245, 249, 0.9));
+        }
+
+        [data-theme="midnight"] {
             --bg-gradient: radial-gradient(circle at 50% 15%, #1e1b4b 0%, #0b0f19 85%);
             --card-bg: rgba(22, 27, 46, 0.65);
             --card-border: rgba(255, 255, 255, 0.1);
@@ -95,26 +115,6 @@
             --chapter-header-bg: linear-gradient(135deg, rgba(192, 38, 211, 0.2), rgba(58, 6, 61, 0.4));
         }
 
-        [data-theme="light"] {
-            --bg-gradient: radial-gradient(circle at 50% 15%, #e2e8f0 0%, #f8fafc 85%);
-            --card-bg: rgba(255, 255, 255, 0.92);
-            --card-border: rgba(99, 102, 241, 0.2);
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --primary-glow: rgba(79, 70, 229, 0.25);
-            --success: #059669;
-            --error: #dc2626;
-            --warning: #d97706;
-            --text-main: #0f172a;
-            --text-muted: #475569;
-            --surface-hover: rgba(79, 70, 229, 0.06);
-            --input-bg: #ffffff;
-            --modal-bg: #ffffff;
-            --choice-bg: rgba(241, 245, 249, 0.8);
-            --choice-border: rgba(203, 213, 225, 0.8);
-            --chapter-header-bg: linear-gradient(135deg, rgba(224, 231, 255, 0.8), rgba(241, 245, 249, 0.9));
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
@@ -133,7 +133,6 @@
             justify-content: center;
         }
 
-        /* Theme Switcher Bar */
         .theme-bar {
             position: fixed;
             top: 15px;
@@ -147,7 +146,7 @@
             border-radius: 30px;
             backdrop-filter: blur(16px);
             z-index: 100;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
         }
 
         .theme-dot {
@@ -160,13 +159,13 @@
         }
 
         .theme-dot:hover { transform: scale(1.15); }
-        .theme-dot.active { border-color: #ffffff; transform: scale(1.1); box-shadow: 0 0 8px rgba(255,255,255,0.6); }
+        .theme-dot.active { border-color: var(--primary); transform: scale(1.1); box-shadow: 0 0 8px var(--primary-glow); }
 
+        .dot-light { background: linear-gradient(135deg, #ffffff, #94a3b8); border: 1px solid #cbd5e1; }
         .dot-midnight { background: linear-gradient(135deg, #1e1b4b, #6366f1); }
         .dot-ocean { background: linear-gradient(135deg, #0c3359, #0284c7); }
         .dot-forest { background: linear-gradient(135deg, #064e3b, #10b981); }
         .dot-sunset { background: linear-gradient(135deg, #4a044e, #c026d3); }
-        .dot-light { background: linear-gradient(135deg, #ffffff, #94a3b8); border: 1px solid #cbd5e1; }
 
         .container {
             width: 100%;
@@ -179,7 +178,7 @@
             backdrop-filter: blur(24px);
             border-radius: 28px;
             padding: 35px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
         }
 
         @media (max-width: 768px) {
@@ -187,7 +186,6 @@
             body { padding: 60px 10px 30px; }
         }
 
-        /* Top Bar */
         .user-nav {
             display: flex;
             justify-content: space-between;
@@ -240,51 +238,10 @@
 
         .btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 18px var(--primary-glow); }
         .btn-outline { background: var(--surface-hover); border: 1px solid var(--card-border); color: var(--text-main); }
-        .btn-outline:hover { background: rgba(255,255,255,0.1); }
+        .btn-outline:hover { background: rgba(79,70,229,0.1); }
         .btn-danger { background: var(--error); }
         .btn-danger:hover { background: #dc2626; }
         .btn-warning { background: var(--warning); color: #000; }
-
-        /* Mode Selector Switch */
-        .mode-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--surface-hover);
-            border: 1px solid var(--card-border);
-            padding: 12px 20px;
-            border-radius: 18px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .mode-options {
-            display: flex;
-            gap: 8px;
-            background: var(--input-bg);
-            padding: 4px;
-            border-radius: 12px;
-            border: 1px solid var(--card-border);
-        }
-
-        .mode-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            padding: 8px 16px;
-            border-radius: 9px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .mode-btn.active {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 2px 8px var(--primary-glow);
-        }
 
         /* Chapter Section Styling */
         .chapter-group {
@@ -296,7 +253,7 @@
             border: 1px solid var(--card-border);
             padding: 12px 18px;
             border-radius: 14px;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -308,6 +265,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            color: var(--text-main);
         }
 
         .level-grid {
@@ -330,13 +288,14 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 86px;
+            min-height: 88px;
         }
 
         .level-card:hover:not(.locked) {
             transform: translateY(-3px);
             border-color: var(--primary);
             box-shadow: 0 8px 20px var(--primary-glow);
+            background: rgba(79, 70, 229, 0.08);
         }
 
         .level-card.locked {
@@ -346,13 +305,13 @@
         }
 
         .level-card.summary-exam {
-            background: linear-gradient(135deg, rgba(251, 191, 36, 0.12), rgba(245, 158, 11, 0.2));
-            border-color: rgba(251, 191, 36, 0.35);
+            background: linear-gradient(135deg, rgba(217, 119, 6, 0.1), rgba(245, 158, 11, 0.18));
+            border-color: rgba(217, 119, 6, 0.4);
         }
 
         .level-card.mock-exam {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(5, 150, 105, 0.2));
-            border-color: rgba(16, 185, 129, 0.35);
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.1), rgba(16, 185, 129, 0.18));
+            border-color: rgba(5, 150, 105, 0.4);
         }
 
         .level-card.passed::after {
@@ -364,9 +323,10 @@
         }
 
         .level-number {
-            font-size: 1.15rem;
+            font-size: 1.2rem;
             font-weight: 900;
             margin-bottom: 2px;
+            color: var(--text-main);
         }
 
         .level-title {
@@ -422,7 +382,7 @@
 
         .question-badge {
             display: inline-block;
-            background: rgba(99, 102, 241, 0.2);
+            background: rgba(79, 70, 229, 0.12);
             color: var(--primary);
             border: 1px solid var(--primary-glow);
             padding: 3px 10px;
@@ -437,21 +397,7 @@
             font-size: 1.18rem;
             font-weight: 700;
             line-height: 1.6;
-        }
-
-        .audio-play-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 15px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            align-self: flex-start;
+            color: var(--text-main);
         }
 
         .choices-grid {
@@ -553,9 +499,9 @@
         }
 
         .badge-user-ans {
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
+            background: rgba(220, 38, 38, 0.12);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            color: var(--error);
             padding: 4px 10px;
             border-radius: 8px;
             font-size: 0.85rem;
@@ -563,9 +509,9 @@
         }
 
         .badge-correct-ans {
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: #6ee7b7;
+            background: rgba(5, 150, 105, 0.12);
+            border: 1px solid rgba(5, 150, 105, 0.3);
+            color: var(--success);
             padding: 4px 10px;
             border-radius: 8px;
             font-size: 0.85rem;
@@ -590,8 +536,8 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(12px);
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -605,7 +551,7 @@
             width: 100%;
             max-width: 480px;
             padding: 30px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
@@ -613,11 +559,11 @@
     <!-- Theme Switcher -->
     <div class="theme-bar">
         <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted);">🎨 底色：</span>
+        <div class="theme-dot dot-light active" title="晨曦明亮 (預設白色底)" onclick="setTheme('light')"></div>
         <div class="theme-dot dot-midnight" title="星空暗夜" onclick="setTheme('midnight')"></div>
         <div class="theme-dot dot-ocean" title="沉靜湛藍" onclick="setTheme('ocean')"></div>
         <div class="theme-dot dot-forest" title="森林翡翠" onclick="setTheme('forest')"></div>
         <div class="theme-dot dot-sunset" title="暮光幻紫" onclick="setTheme('sunset')"></div>
-        <div class="theme-dot dot-light" title="晨曦明亮" onclick="setTheme('light')"></div>
     </div>
 
     <div class="container">
@@ -640,20 +586,18 @@
 
             <!-- VIEW 1: Level Selection Map -->
             <div id="levelSelectView">
-                <div class="mode-container">
+                <div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
                     <div>
-                        <strong style="font-size: 0.95rem;">🎯 闖關模式</strong>
-                        <div style="font-size: 0.8rem; color: var(--text-muted);">選擇作答習慣，滿 85 分過關解鎖下一關</div>
-                    </div>
-                    <div class="mode-options">
-                        <button id="modeRead" class="mode-btn active" onclick="switchMode('reading')">📖 閱讀認字</button>
-                        <button id="modeAudio" class="mode-btn" onclick="switchMode('audio')">🎧 聽音辨字</button>
+                        <strong style="font-size: 1.1rem;">🗺️ 關卡地圖 (每關 20 題，85 分過關解鎖下一關)</strong>
+                        <div style="font-size: 0.82rem; color: var(--text-muted);">點選已解鎖關卡即可直接開始測驗</div>
                     </div>
                 </div>
 
                 <!-- Chapters Section Hierarchy -->
                 <div id="chaptersContainer">
-                    <!-- Populated dynamically via JS -->
+                    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        關卡載入中，請稍候...
+                    </div>
                 </div>
             </div>
 
@@ -676,7 +620,6 @@
                 <div class="question-box">
                     <span class="question-badge" id="qBadge">第 1 / 20 題</span>
                     <div class="question-text" id="questionText">題目載入中...</div>
-                    <button id="ttsButton" class="audio-play-btn" style="display: none;" onclick="playQuestionTTS()">🔊 播放題目語音</button>
                 </div>
 
                 <div class="choices-grid" id="choicesGrid">
@@ -693,7 +636,7 @@
                 <h2 style="font-weight: 900; margin-bottom: 8px;" id="resultHeadline">測驗完成！</h2>
                 <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px;" id="resultSubtext">過關標準為 85 分</p>
 
-                <div style="display: flex; justify-content: center; gap: 14px; margin-bottom: 25px;">
+                <div style="display: flex; justify-content: center; gap: 14px; margin-bottom: 25px; flex-wrap: wrap;">
                     <button onclick="restartLevel()" class="btn btn-outline">🔄 再次挑戰</button>
                     <button id="nextLevelBtn" onclick="goToNextLevel()" class="btn" style="background: var(--success);">⭐ 前往下一關</button>
                     <button onclick="exitToLevelSelect()" class="btn">🗺️ 回關卡地圖</button>
@@ -717,7 +660,7 @@
     <div id="reportModal" class="modal" style="display: none;">
         <div class="modal-content">
             <h3 style="font-weight: 800; margin-bottom: 10px; color: var(--text-main); text-align: center;">🚨 題目問題回報</h3>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 18px; text-align: center;">發現題目有錯字、答案爭議或語音問題嗎？請描述給老師知道：</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 18px; text-align: center;">發現題目有錯字或答案爭議嗎？請描述給老師知道：</p>
             
             <div style="background: var(--surface-hover); border: 1px solid var(--card-border); padding: 12px; border-radius: 12px; font-size: 0.88rem; margin-bottom: 15px; color: var(--text-muted);" id="reportPreview">
                 當前題目預覽...
@@ -733,7 +676,7 @@
     </div>
 
     <script>
-        // Theme Management
+        // Theme Management - Default to 'light' (White theme)
         function setTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
             localStorage.setItem('game_theme', theme);
@@ -743,7 +686,7 @@
         }
 
         (function() {
-            const savedTheme = localStorage.getItem('game_theme') || 'midnight';
+            const savedTheme = localStorage.getItem('game_theme') || 'light';
             setTheme(savedTheme);
         })();
 
@@ -794,18 +737,11 @@
         document.getElementById("avatarLetter").innerText = (currentUser.name ? currentUser.name[0] : "U");
 
         // Game State
-        let currentMode = "reading"; // "reading" or "audio"
         let currentLevel = 1;
         let currentQuestionIndex = 0;
         let currentQuestionsList = [];
         let score = 0;
         let wrongQuestions = [];
-
-        function switchMode(mode) {
-            currentMode = mode;
-            document.getElementById("modeRead").className = `mode-btn ${mode === 'reading' ? 'active' : ''}`;
-            document.getElementById("modeAudio").className = `mode-btn ${mode === 'audio' ? 'active' : ''}`;
-        }
 
         function handleLogout() {
             localStorage.removeItem("game_username");
@@ -825,8 +761,18 @@
             { title: "🎯 全真歷屆跨章節綜合模擬測驗", icon: "🎓", range: [47, 51], summaryExamLevel: null }
         ];
 
+        function getLevelData(lvl) {
+            if (typeof GAME_QUESTIONS_DATABASE !== 'undefined') {
+                return GAME_QUESTIONS_DATABASE.find(item => item.level === lvl);
+            } else if (typeof levels !== 'undefined' && levels[String(lvl)]) {
+                return levels[String(lvl)];
+            }
+            return null;
+        }
+
         function renderChapterGrid() {
             const container = document.getElementById("chaptersContainer");
+            if (!container) return;
             container.innerHTML = "";
 
             chapterGroups.forEach((grp, gIdx) => {
@@ -850,7 +796,7 @@
 
                     card.className = `level-card ${isLocked ? 'locked' : ''} ${isPassed ? 'passed' : ''} ${isMock ? 'mock-exam' : ''}`;
                     
-                    const qData = GAME_QUESTIONS_DATABASE.find(item => item.level === l);
+                    const qData = getLevelData(l);
                     const titleText = qData ? qData.title : `第 ${l} 關`;
 
                     card.innerHTML = `
@@ -873,7 +819,7 @@
                     const sumCard = document.createElement("div");
                     sumCard.className = `level-card summary-exam ${isLocked ? 'locked' : ''} ${isPassed ? 'passed' : ''}`;
                     
-                    const sumData = GAME_QUESTIONS_DATABASE.find(item => item.level === sumLevel);
+                    const sumData = getLevelData(sumLevel);
                     const sumTitle = sumData ? sumData.title : `第 ${gIdx + 1} 章總測驗`;
 
                     sumCard.innerHTML = `
@@ -892,7 +838,9 @@
             });
         }
 
+        // Initialize grid immediately and on DOM load
         renderChapterGrid();
+        window.addEventListener("load", renderChapterGrid);
 
         // Start Level
         function startLevel(lvl) {
@@ -901,13 +849,12 @@
             score = 0;
             wrongQuestions = [];
 
-            const lvlData = GAME_QUESTIONS_DATABASE.find(item => item.level === lvl);
+            const lvlData = getLevelData(lvl);
             if (!lvlData || !lvlData.questions) {
-                alert("關卡題庫載入失敗！");
+                alert("關卡題庫載入中，請稍候重試！");
                 return;
             }
 
-            // Clone questions array
             currentQuestionsList = [...lvlData.questions];
 
             document.getElementById("levelSelectView").style.display = "none";
@@ -927,22 +874,14 @@
             document.getElementById("progressBar").style.width = `${((currentQuestionIndex) / total) * 100}%`;
 
             const qTextNode = document.getElementById("questionText");
-            const ttsBtn = document.getElementById("ttsButton");
-
-            if (currentMode === "audio") {
-                qTextNode.innerText = "🎧 請聽題目語音作答：";
-                ttsBtn.style.display = "inline-flex";
-                playQuestionTTS();
-            } else {
-                qTextNode.innerText = q.q;
-                ttsBtn.style.display = "none";
-            }
+            qTextNode.innerText = q.q || q.question;
 
             const choicesGrid = document.getElementById("choicesGrid");
             choicesGrid.innerHTML = "";
 
+            const opts = q.options || q.choices || [];
             const keys = ["A", "B", "C", "D"];
-            q.options.forEach((opt, idx) => {
+            opts.forEach((opt, idx) => {
                 const btn = document.createElement("button");
                 btn.className = "choice-btn";
                 btn.innerHTML = `<span class="choice-key">${keys[idx]}</span> <span>${opt}</span>`;
@@ -951,38 +890,27 @@
             });
         }
 
-        function playQuestionTTS() {
-            const q = currentQuestionsList[currentQuestionIndex];
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(q.q);
-                utterance.lang = 'zh-TW';
-                utterance.rate = 0.95;
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-
         function selectAnswer(selectedKey, btnElem) {
             const q = currentQuestionsList[currentQuestionIndex];
-            const isCorrect = (selectedKey.toUpperCase() === q.ans.toUpperCase());
+            const correctAns = q.ans || q.answer || "A";
+            const isCorrect = (selectedKey.toUpperCase() === correctAns.toUpperCase());
 
-            // Disable buttons temporarily
             const allBtns = document.querySelectorAll(".choice-btn");
             allBtns.forEach(b => b.disabled = true);
 
             if (isCorrect) {
                 score += 5; // 20 questions = 100 points
-                btnElem.style.background = "rgba(16, 185, 129, 0.2)";
+                btnElem.style.background = "rgba(5, 150, 105, 0.18)";
                 btnElem.style.borderColor = "var(--success)";
             } else {
-                btnElem.style.background = "rgba(239, 68, 68, 0.2)";
+                btnElem.style.background = "rgba(220, 38, 38, 0.18)";
                 btnElem.style.borderColor = "var(--error)";
                 wrongQuestions.push({
-                    q: q.q,
-                    options: q.options,
+                    q: q.q || q.question,
+                    options: q.options || q.choices || [],
                     userAns: selectedKey,
-                    correctAns: q.ans,
-                    exp: q.exp || "暫無考點解析"
+                    correctAns: correctAns,
+                    exp: q.exp || q.explanation || "暫無考點解析"
                 });
             }
 
@@ -993,7 +921,7 @@
                 } else {
                     finishLevel();
                 }
-            }, 300);
+            }, 250);
         }
 
         function finishLevel() {
@@ -1013,7 +941,6 @@
                 subtext.innerText = `獲得 ${score} 分，順利解鎖下一關！`;
                 nextBtn.style.display = "inline-flex";
 
-                // Update unlocked level if new record
                 if (currentLevel >= currentUser.unlockedLevel && currentUser.unlockedLevel < 51) {
                     const nextUnlock = currentLevel + 1;
                     currentUser.unlockedLevel = nextUnlock;
@@ -1029,7 +956,7 @@
                 nextBtn.style.display = "none";
             }
 
-            // Save Score to Firebase
+            // Save Score to Firebase Realtime Database
             if (db) {
                 const scoreRecord = {
                     username: currentUser.username,
@@ -1093,10 +1020,9 @@
             renderChapterGrid();
         }
 
-        // Report Issue Modal
         function openReportModal() {
             const q = currentQuestionsList[currentQuestionIndex];
-            document.getElementById("reportPreview").innerText = `題目：${q.q}`;
+            document.getElementById("reportPreview").innerText = `題目：${q.q || q.question}`;
             document.getElementById("reportDesc").value = "";
             document.getElementById("reportModal").style.display = "flex";
         }
@@ -1119,9 +1045,9 @@
                 school: currentUser.school,
                 level: currentLevel,
                 level_title: document.getElementById("gameLevelHeaderTitle").innerText,
-                question: q.q,
-                choices: q.options,
-                answer: q.ans,
+                question: q.q || q.question,
+                choices: q.options || q.choices,
+                answer: q.ans || q.answer,
                 error_desc: desc,
                 reported_at: firebase.database.ServerValue.TIMESTAMP
             };

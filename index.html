@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>餐旅概論雲端闖關與檢測系統 - 入口</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <!-- Load Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -12,7 +12,25 @@
     
     <style>
         /* ================= THEME DEFINITIONS ================= */
-        :root, [data-theme="midnight"] {
+        :root, [data-theme="light"] {
+            --bg-gradient: radial-gradient(circle at 50% 20%, #e2e8f0 0%, #f8fafc 85%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(99, 102, 241, 0.2);
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-glow: rgba(79, 70, 229, 0.25);
+            --success: #059669;
+            --error: #dc2626;
+            --warning: #d97706;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --surface-hover: rgba(79, 70, 229, 0.05);
+            --input-bg: #ffffff;
+            --modal-bg: #ffffff;
+            --table-header: rgba(79, 70, 229, 0.08);
+        }
+
+        [data-theme="midnight"] {
             --bg-gradient: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #0b0f19 85%);
             --card-bg: rgba(22, 27, 46, 0.65);
             --card-border: rgba(255, 255, 255, 0.1);
@@ -84,24 +102,6 @@
             --table-header: rgba(244, 114, 182, 0.08);
         }
 
-        [data-theme="light"] {
-            --bg-gradient: radial-gradient(circle at 50% 20%, #e2e8f0 0%, #f8fafc 85%);
-            --card-bg: rgba(255, 255, 255, 0.92);
-            --card-border: rgba(99, 102, 241, 0.2);
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --primary-glow: rgba(79, 70, 229, 0.25);
-            --success: #059669;
-            --error: #dc2626;
-            --warning: #d97706;
-            --text-main: #0f172a;
-            --text-muted: #475569;
-            --surface-hover: rgba(79, 70, 229, 0.06);
-            --input-bg: #ffffff;
-            --modal-bg: #ffffff;
-            --table-header: rgba(79, 70, 229, 0.08);
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
@@ -136,7 +136,7 @@
             border-radius: 30px;
             backdrop-filter: blur(16px);
             z-index: 100;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
         }
 
         .theme-dot {
@@ -148,21 +148,14 @@
             transition: transform 0.2s ease, border-color 0.2s ease;
         }
 
-        .theme-dot:hover {
-            transform: scale(1.15);
-        }
+        .theme-dot:hover { transform: scale(1.15); }
+        .theme-dot.active { border-color: var(--primary); box-shadow: 0 0 8px var(--primary-glow); transform: scale(1.1); }
 
-        .theme-dot.active {
-            border-color: #ffffff;
-            box-shadow: 0 0 8px rgba(255,255,255,0.6);
-            transform: scale(1.1);
-        }
-
+        .dot-light { background: linear-gradient(135deg, #ffffff, #94a3b8); border: 1px solid #cbd5e1; }
         .dot-midnight { background: linear-gradient(135deg, #1e1b4b, #6366f1); }
         .dot-ocean { background: linear-gradient(135deg, #0c3359, #0284c7); }
         .dot-forest { background: linear-gradient(135deg, #064e3b, #10b981); }
         .dot-sunset { background: linear-gradient(135deg, #4a044e, #c026d3); }
-        .dot-light { background: linear-gradient(135deg, #ffffff, #94a3b8); border: 1px solid #cbd5e1; }
 
         .container {
             width: 100%;
@@ -175,13 +168,13 @@
             backdrop-filter: blur(24px);
             border-radius: 28px;
             padding: 40px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45), 0 0 60px var(--primary-glow);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08), 0 0 40px var(--primary-glow);
             position: relative;
         }
 
         .hero-badge {
             display: inline-block;
-            background: rgba(99, 102, 241, 0.15);
+            background: rgba(79, 70, 229, 0.1);
             border: 1px solid var(--primary-glow);
             color: var(--primary);
             padding: 4px 14px;
@@ -197,7 +190,7 @@
             font-size: 2.3rem;
             font-weight: 900;
             text-align: center;
-            background: linear-gradient(135deg, #a5b4fc 0%, var(--primary) 100%);
+            background: linear-gradient(135deg, var(--text-main) 0%, var(--primary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 8px;
@@ -211,7 +204,6 @@
             margin-bottom: 35px;
         }
 
-        /* Forms / Login */
         .auth-container {
             display: grid;
             grid-template-columns: 1.15fr 1.85fr;
@@ -220,12 +212,8 @@
         }
 
         @media (max-width: 768px) {
-            .auth-container {
-                grid-template-columns: 1fr;
-            }
-            .portal-card {
-                padding: 24px 20px;
-            }
+            .auth-container { grid-template-columns: 1fr; }
+            .portal-card { padding: 24px 20px; }
         }
 
         .auth-card {
@@ -236,7 +224,6 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            box-shadow: inset 0 1px 1px rgba(255,255,255,0.05);
         }
 
         .form-group {
@@ -249,9 +236,6 @@
             font-size: 0.85rem;
             font-weight: 700;
             color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
         .form-control {
@@ -271,14 +255,9 @@
             box-shadow: 0 0 14px var(--primary-glow);
         }
 
-        .form-control option {
-            background-color: var(--modal-bg);
-            color: var(--text-main);
-        }
-
         .alert-box {
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid rgba(251, 191, 36, 0.25);
+            background: rgba(217, 119, 6, 0.1);
+            border: 1px solid rgba(217, 119, 6, 0.3);
             color: var(--warning);
             padding: 12px;
             border-radius: 12px;
@@ -311,11 +290,10 @@
             box-shadow: 0 6px 20px var(--primary-glow);
         }
 
-        /* Leaderboard Section */
         .leaderboard-title {
             font-size: 1.2rem;
             font-weight: 800;
-            color: var(--warning);
+            color: var(--text-main);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -384,11 +362,8 @@
             font-size: 0.88rem;
         }
 
-        tr:hover {
-            background: var(--surface-hover);
-        }
+        tr:hover { background: var(--surface-hover); }
 
-        /* Medals */
         .rank-cell {
             font-weight: 800;
             display: flex;
@@ -399,11 +374,10 @@
             border-radius: 50%;
             font-size: 0.82rem;
         }
-        .rank-1 { background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(245, 158, 11, 0.4)); color: #fbbf24; border: 1.5px solid #fbbf24; }
-        .rank-2 { background: linear-gradient(135deg, rgba(156, 163, 175, 0.3), rgba(107, 114, 128, 0.4)); color: #e2e8f0; border: 1.5px solid #cbd5e1; }
-        .rank-3 { background: linear-gradient(135deg, rgba(217, 119, 6, 0.3), rgba(180, 83, 9, 0.4)); color: #f97316; border: 1.5px solid #ea580c; }
+        .rank-1 { background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(245, 158, 11, 0.4)); color: #b45309; border: 1.5px solid #f59e0b; }
+        .rank-2 { background: linear-gradient(135deg, rgba(156, 163, 175, 0.3), rgba(107, 114, 128, 0.4)); color: #475569; border: 1.5px solid #94a3b8; }
+        .rank-3 { background: linear-gradient(135deg, rgba(217, 119, 6, 0.3), rgba(180, 83, 9, 0.4)); color: #c2410c; border: 1.5px solid #ea580c; }
 
-        /* Modal / Dialog */
         .modal {
             position: fixed;
             z-index: 1000;
@@ -411,8 +385,8 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(12px);
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -426,7 +400,7 @@
             width: 100%;
             max-width: 460px;
             padding: 32px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
             animation: modalFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -440,11 +414,11 @@
     <!-- Theme Switcher -->
     <div class="theme-bar">
         <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted);">🎨 底色：</span>
-        <div class="theme-dot dot-midnight" title="星空暗夜 (預設)" onclick="setTheme('midnight')"></div>
+        <div class="theme-dot dot-light active" title="晨曦明亮 (預設白色底)" onclick="setTheme('light')"></div>
+        <div class="theme-dot dot-midnight" title="星空暗夜" onclick="setTheme('midnight')"></div>
         <div class="theme-dot dot-ocean" title="沉靜湛藍" onclick="setTheme('ocean')"></div>
         <div class="theme-dot dot-forest" title="森林翡翠" onclick="setTheme('forest')"></div>
         <div class="theme-dot dot-sunset" title="暮光幻紫" onclick="setTheme('sunset')"></div>
-        <div class="theme-dot dot-light" title="晨曦明亮" onclick="setTheme('light')"></div>
     </div>
 
     <div class="container">
@@ -554,7 +528,7 @@
 
             <div style="display: flex; gap: 12px;">
                 <button onclick="closeRegisterModal()" class="btn" style="flex: 1; background: var(--surface-hover); border: 1px solid var(--card-border); color: var(--text-main); box-shadow: none;">返回</button>
-                <button onclick="submitRegister()" class="btn" style="flex: 1; background: var(--success); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);">完成註冊並登入</button>
+                <button onclick="submitRegister()" class="btn" style="flex: 1; background: var(--success); box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);">完成註冊並登入</button>
             </div>
         </div>
     </div>
@@ -574,22 +548,17 @@
     </div>
 
     <script>
-        // Theme Management
+        // Theme Management - Default to 'light' (White theme)
         function setTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
             localStorage.setItem('game_theme', theme);
-            
-            // Update active dot
-            document.querySelectorAll('.theme-dot').forEach(dot => {
-                dot.classList.remove('active');
-            });
+            document.querySelectorAll('.theme-dot').forEach(dot => dot.classList.remove('active'));
             const activeDot = document.querySelector(`.dot-${theme}`);
             if (activeDot) activeDot.classList.add('active');
         }
 
-        // Apply saved theme on load
         (function() {
-            const savedTheme = localStorage.getItem('game_theme') || 'midnight';
+            const savedTheme = localStorage.getItem('game_theme') || 'light';
             setTheme(savedTheme);
         })();
 
@@ -893,7 +862,7 @@
                 const isMe = (s.username === localStorage.getItem("game_username"));
                 const tr = document.createElement("tr");
                 if (isMe) {
-                    tr.style.background = "var(--surface-hover)";
+                    tr.style.background = "rgba(79, 70, 229, 0.08)";
                     tr.style.outline = "1.5px solid var(--primary)";
                 }
                 
@@ -901,7 +870,7 @@
                     <td style="display: flex; justify-content: center; align-items: center; border-bottom: none; height: 44px;">${rankHtml}</td>
                     <td><b>${s.school}</b></td>
                     <td><b>${s.name}</b></td>
-                    <td style="text-align: right; color: var(--warning); font-weight: 800;">${s.totalScore} 分</td>
+                    <td style="text-align: right; color: var(--primary); font-weight: 800;">${s.totalScore} 分</td>
                 `;
                 tbody.appendChild(tr);
             });

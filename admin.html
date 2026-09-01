@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +15,24 @@
     
     <style>
         /* ================= THEME DEFINITIONS ================= */
-        :root, [data-theme="midnight"] {
+        :root, [data-theme="light"] {
+            --bg-gradient: radial-gradient(circle at 50% 15%, #e2e8f0 0%, #f8fafc 85%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(99, 102, 241, 0.2);
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-glow: rgba(79, 70, 229, 0.25);
+            --success: #059669;
+            --error: #dc2626;
+            --warning: #d97706;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --surface-hover: rgba(79, 70, 229, 0.05);
+            --input-bg: #ffffff;
+            --table-header: rgba(79, 70, 229, 0.08);
+        }
+
+        [data-theme="midnight"] {
             --bg-gradient: radial-gradient(circle at 50% 15%, #1e1b4b 0%, #0b0f19 85%);
             --card-bg: rgba(22, 27, 46, 0.65);
             --card-border: rgba(255, 255, 255, 0.1);
@@ -83,23 +100,6 @@
             --table-header: rgba(244, 114, 182, 0.08);
         }
 
-        [data-theme="light"] {
-            --bg-gradient: radial-gradient(circle at 50% 15%, #e2e8f0 0%, #f8fafc 85%);
-            --card-bg: rgba(255, 255, 255, 0.92);
-            --card-border: rgba(99, 102, 241, 0.2);
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --primary-glow: rgba(79, 70, 229, 0.25);
-            --success: #059669;
-            --error: #dc2626;
-            --warning: #d97706;
-            --text-main: #0f172a;
-            --text-muted: #475569;
-            --surface-hover: rgba(79, 70, 229, 0.06);
-            --input-bg: #ffffff;
-            --table-header: rgba(79, 70, 229, 0.08);
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
@@ -116,7 +116,6 @@
             padding: 35px 20px;
         }
 
-        /* Theme Switcher Bar */
         .theme-bar {
             position: fixed;
             top: 15px;
@@ -130,7 +129,7 @@
             border-radius: 30px;
             backdrop-filter: blur(16px);
             z-index: 100;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
         }
 
         .theme-dot {
@@ -143,13 +142,13 @@
         }
 
         .theme-dot:hover { transform: scale(1.15); }
-        .theme-dot.active { border-color: #ffffff; transform: scale(1.1); box-shadow: 0 0 8px rgba(255,255,255,0.6); }
+        .theme-dot.active { border-color: var(--primary); transform: scale(1.1); box-shadow: 0 0 8px var(--primary-glow); }
 
+        .dot-light { background: linear-gradient(135deg, #ffffff, #94a3b8); border: 1px solid #cbd5e1; }
         .dot-midnight { background: linear-gradient(135deg, #1e1b4b, #6366f1); }
         .dot-ocean { background: linear-gradient(135deg, #0c3359, #0284c7); }
         .dot-forest { background: linear-gradient(135deg, #064e3b, #10b981); }
         .dot-sunset { background: linear-gradient(135deg, #4a044e, #c026d3); }
-        .dot-light { background: linear-gradient(135deg, #ffffff, #94a3b8); border: 1px solid #cbd5e1; }
 
         .container {
             width: 100%;
@@ -163,13 +162,13 @@
             backdrop-filter: blur(24px);
             border-radius: 28px;
             padding: 35px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
         }
 
         h1 {
             font-size: 2rem;
             font-weight: 900;
-            background: linear-gradient(135deg, #a5b4fc 0%, var(--primary) 100%);
+            background: linear-gradient(135deg, var(--text-main) 0%, var(--primary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 4px;
@@ -181,7 +180,6 @@
             margin-bottom: 25px;
         }
 
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -321,7 +319,7 @@
         tr:hover { background: var(--surface-hover); }
 
         .progress-badge {
-            background: rgba(99, 102, 241, 0.15);
+            background: rgba(79, 70, 229, 0.1);
             border: 1px solid var(--primary-glow);
             color: var(--primary);
             padding: 3px 10px;
@@ -331,7 +329,6 @@
             display: inline-block;
         }
 
-        /* Reports Section cards */
         .reports-grid {
             display: flex;
             flex-direction: column;
@@ -361,11 +358,11 @@
     <!-- Theme Switcher -->
     <div class="theme-bar">
         <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted);">🎨 底色：</span>
+        <div class="theme-dot dot-light active" title="晨曦明亮 (預設白色底)" onclick="setTheme('light')"></div>
         <div class="theme-dot dot-midnight" title="星空暗夜" onclick="setTheme('midnight')"></div>
         <div class="theme-dot dot-ocean" title="沉靜湛藍" onclick="setTheme('ocean')"></div>
         <div class="theme-dot dot-forest" title="森林翡翠" onclick="setTheme('forest')"></div>
         <div class="theme-dot dot-sunset" title="暮光幻紫" onclick="setTheme('sunset')"></div>
-        <div class="theme-dot dot-light" title="晨曦明亮" onclick="setTheme('light')"></div>
     </div>
 
     <div class="container">
@@ -449,7 +446,7 @@
     </div>
 
     <script>
-        // Theme Management
+        // Theme Management - Default to 'light' (White theme)
         function setTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
             localStorage.setItem('game_theme', theme);
@@ -459,11 +456,10 @@
         }
 
         (function() {
-            const savedTheme = localStorage.getItem('game_theme') || 'midnight';
+            const savedTheme = localStorage.getItem('game_theme') || 'light';
             setTheme(savedTheme);
         })();
 
-        // Password verification on entry
         (function() {
             const auth = localStorage.getItem("teacher_authenticated");
             if (auth !== "true") {
@@ -512,7 +508,6 @@
                 rawScores = data.scores || {};
                 rawReports = data.reports || {};
                 
-                // Update stats
                 document.getElementById("statStudents").innerText = Object.keys(rawUsers).length;
                 document.getElementById("statAttempts").innerText = Object.keys(rawScores).length;
                 document.getElementById("statReports").innerText = Object.keys(rawReports).length;
@@ -622,7 +617,7 @@
                 card.innerHTML = `
                     <div class="report-header">
                         <div>
-                            <span style="background: rgba(251,191,36,0.15); color: var(--warning); border: 1px solid rgba(251,191,36,0.3); padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; margin-right: 8px; font-weight: bold;">${rep.level_title}</span>
+                            <span style="background: rgba(217,119,6,0.12); color: var(--warning); border: 1px solid rgba(217,119,6,0.3); padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; margin-right: 8px; font-weight: bold;">${rep.level_title}</span>
                             <strong>${rep.school} - ${rep.name} (${rep.username})</strong>
                         </div>
                         <div style="display: flex; align-items: center; gap: 12px;">
@@ -641,7 +636,7 @@
                         </div>
                         <div>
                             <strong style="color: var(--error);">學生描述的問題：</strong>
-                            <div style="background: rgba(239, 68, 68, 0.08); border-left: 3px solid var(--error); padding: 10px 14px; border-radius: 0 10px 10px 0; margin-top: 5px; color: var(--text-main);">
+                            <div style="background: rgba(220, 38, 38, 0.08); border-left: 3px solid var(--error); padding: 10px 14px; border-radius: 0 10px 10px 0; margin-top: 5px; color: var(--text-main);">
                                 ${rep.error_desc}
                             </div>
                         </div>
