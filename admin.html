@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>餐旅概論雲端檢測系統 - 教師管理後台</title>
+    <title>觀光餐旅業導論雲端檢測系統 - 教師管理後台</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <!-- Load Firebase SDK -->
@@ -373,7 +373,7 @@
     <div class="container">
         <div class="dashboard-card">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 5px;">
-                <h1>餐旅概論雲端檢測系統 - 教師後台</h1>
+                <h1>觀光餐旅業導論雲端檢測系統 - 教師後台</h1>
                 <div style="display: flex; gap: 10px;">
                     <a href="index.html" class="btn btn-outline">🏠 回首頁</a>
                     <button onclick="logoutAdmin()" class="btn btn-error">退出後台</button>
@@ -742,7 +742,7 @@
             const worksheet = XLSX.utils.aoa_to_sheet(excelData);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "學生最高小考成績");
-            XLSX.writeFile(workbook, "餐旅概論學生小考最高成績表.xlsx");
+            XLSX.writeFile(workbook, "觀光餐旅業導論學生小考最高成績表.xlsx");
         }
     </script>
 </body>

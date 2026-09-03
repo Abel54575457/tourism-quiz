@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <title>餐旅概論 - 闖關與全真檢測</title>
+    <title>觀光餐旅業導論 - 闖關與全真檢測</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <!-- Load Firebase SDK -->
@@ -1073,8 +1073,8 @@
             pdfContainer.innerHTML = `
                 <div style="border-bottom: 2px solid #4f46e5; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end;">
                     <div>
-                        <h1 style="color: #1e1b4b; font-size: 22px; margin: 0 0 6px 0; font-weight: 900;">🎓 觀光餐旅概論 - 隨堂評量錯題檢討與解析講義</h1>
-                        <div style="color: #64748b; font-size: 13px;">雲端智能互動小考系統・教育部課綱標準餐旅概論題庫</div>
+                        <h1 style="color: #1e1b4b; font-size: 22px; margin: 0 0 6px 0; font-weight: 900;">🎓 觀光餐旅業導論 - 隨堂評量錯題檢討與解析講義</h1>
+                        <div style="color: #64748b; font-size: 13px;">雲端智能互動小考系統・教育部課綱標準觀光餐旅業導論題庫</div>
                     </div>
                     <div style="text-align: right;">
                         <span style="display: inline-block; background: #4f46e5; color: #ffffff; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">評量學習單</span>
@@ -1093,13 +1093,13 @@
                 ${questionsHtml}
 
                 <div style="margin-top: 30px; border-top: 1px dashed #cbd5e1; padding-top: 15px; text-align: center; color: #94a3b8; font-size: 11px;">
-                    ※ 本教材解析講義由「觀光餐旅概論雲端測驗系統」自動生成・僅供學生學習與課後複習使用
+                    ※ 本教材解析講義由「觀光餐旅業導論雲端測驗系統」自動生成・僅供學生學習與課後複習使用
                 </div>
             `;
 
             document.body.appendChild(pdfContainer);
 
-            const filename = `餐旅概論錯題解析_第${currentLevel}關_${currentUser.name || currentUser.username}.pdf`;
+            const filename = `觀光餐旅業導論錯題解析_第${currentLevel}關_${currentUser.name || currentUser.username}.pdf`;
 
             if (typeof html2pdf !== 'undefined') {
                 const opt = {
