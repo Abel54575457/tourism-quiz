@@ -17,7 +17,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <!-- Load Question Database with cache-busting parameter -->
-    <script src="questions.js?v=20260901_final"></script>
+    <script src="questions.js?v=20260908_sequential"></script>
 
     <style>
         /* ================= THEME DEFINITIONS ================= */
@@ -594,7 +594,7 @@
             <div id="levelSelectView">
                 <div style="margin-bottom: 22px; display: flex; align-items: center; justify-content: space-between;">
                     <div>
-                        <strong style="font-size: 1.15rem; color: var(--text-main);">🗺️ 51 關卡完整地圖 (滿 85 分過關並解鎖下一關)</strong>
+                        <strong style="font-size: 1.15rem; color: var(--text-main);">🗺️ 32 關卡完整地圖 (滿 85 分過關並解鎖下一關)</strong>
                         <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">點選以下已解鎖的關卡即可直接開始測驗</div>
                     </div>
                 </div>
@@ -756,13 +756,13 @@
             window.location.href = "index.html";
         }
 
-        // Chapter Group Definitions for UI
+        // Chapter Group Definitions for UI (Sequential 32-Level Hierarchy)
         const chapterGroups = [
-            { title: "第 1 章：觀光餐旅業導論與基本概念", icon: "📖", range: [1, 5], summaryExamLevel: 23 },
-            { title: "第 2 章：觀光餐旅從業人員與職業道德", icon: "👔", range: [6, 7], summaryExamLevel: 24 },
-            { title: "第 3 章：餐飲業概論與營運管理", icon: "🍳", range: [8, 14], summaryExamLevel: 25 },
-            { title: "第 4 章：旅館業概論與客房客務", icon: "🏨", range: [15, 19], summaryExamLevel: 26 },
-            { title: "第 5 章：旅行業概論與遊程規劃", icon: "✈️", range: [20, 22], summaryExamLevel: 27 },
+            { title: "第 1 章：觀光餐旅業導論與基本概念", icon: "📖", range: [1, 5], summaryExamLevel: 6 },
+            { title: "第 2 章：觀光餐旅從業人員與職業道德", icon: "👔", range: [7, 8], summaryExamLevel: 9 },
+            { title: "第 3 章：餐飲業概論與營運管理", icon: "🍳", range: [10, 16], summaryExamLevel: 17 },
+            { title: "第 4 章：旅館業概論與客房客務", icon: "🏨", range: [18, 22], summaryExamLevel: 23 },
+            { title: "第 5 章：旅行業概論與遊程規劃", icon: "✈️", range: [24, 26], summaryExamLevel: 27 },
             { title: "🎯 全真歷屆跨章節綜合模擬測驗", icon: "🎓", range: [28, 32], summaryExamLevel: null }
         ];
 
@@ -818,8 +818,10 @@
                 // Add Summary Exam card if applicable
                 if (grp.summaryExamLevel) {
                     const sumLevel = grp.summaryExamLevel;
-                    const isLocked = (sumLevel > currentUser.unlockedLevel);
-                    const isPassed = (sumLevel < currentUser.unlockedLevel);
+                    // Unlocked if student reached sumLevel OR if student already unlocked past this chapter
+                    const isUnlocked = (currentUser.unlockedLevel >= sumLevel) || (currentUser.unlockedLevel > grp.range[1]);
+                    const isLocked = !isUnlocked;
+                    const isPassed = (currentUser.unlockedLevel > sumLevel);
 
                     const sumCard = document.createElement("div");
                     sumCard.className = `level-card summary-exam ${isLocked ? 'locked' : ''} ${isPassed ? 'passed' : ''}`;
