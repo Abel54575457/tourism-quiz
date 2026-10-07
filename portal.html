@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三年級 觀光餐旅業導論 — 數位自主學習與闖關遊戲中心</title>
+    <meta name="description" content="專為三年級學生統測升學與自主複習打造的三合一數位學習平台：單字闖關遊戲、學科小考題庫、FlashCard Pro 全冊單字記憶卡。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #090d16;
+            --surface: rgba(255, 255, 255, 0.04);
+            --surface-hover: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.09);
+            --border-hover: rgba(251, 191, 36, 0.4);
+            --text: #f3f4f6;
+            --text-sub: #94a3b8;
+            --amber: #fbbf24;
+            --indigo: #6366f1;
+            --emerald: #10b981;
+            --sky: #38bdf8;
+            --rose: #f43f5e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(circle at 20% 15%, rgba(99, 102, 241, 0.18) 0%, transparent 40%),
+                radial-gradient(circle at 80% 25%, rgba(251, 191, 36, 0.14) 0%, transparent 35%),
+                radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.12) 0%, transparent 45%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 16px 40px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1140px;
+            margin: 0 auto;
+            flex: 1;
+        }
+
+        /* Top Header */
+        header {
+            text-align: center;
+            padding: 24px 12px 36px;
+        }
+
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 9999px;
+            color: var(--amber);
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            line-height: 1.25;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 30%, #cbd5e1 70%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        @media (min-width: 640px) {
+            h1 { font-size: 2.75rem; }
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-sub);
+            max-width: 640px;
+            margin: 0 auto 16px;
+            line-height: 1.6;
+        }
+
+        .banner-tip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 8px 16px;
+            font-size: 0.82rem;
+            color: #cbd5e1;
+        }
+
+        /* 3-Game Grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 22px;
+            margin-top: 10px;
+            margin-bottom: 36px;
+        }
+
+        @media (min-width: 860px) {
+            .games-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .game-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 28px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            backdrop-filter: blur(16px);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .game-card:hover {
+            transform: translateY(-6px);
+            background: var(--surface-hover);
+            border-color: var(--border-hover);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(251, 191, 36, 0.12);
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: 24px 24px 0 0;
+        }
+
+        .card-vocab::before {
+            background: linear-gradient(90deg, #6366f1, #818cf8);
+        }
+        .card-quiz::before {
+            background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+        }
+        .card-flashcard::before {
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .card-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .icon-vocab { background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.4); }
+        .icon-quiz { background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); }
+        .icon-flashcard { background: rgba(251, 191, 36, 0.2); border: 1px solid rgba(251, 191, 36, 0.4); }
+
+        .tag-status {
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 8px;
+            letter-spacing: 0.05em;
+        }
+
+        .tag-vocab { background: rgba(99, 102, 241, 0.15); color: #a5b4fc; }
+        .tag-quiz { background: rgba(56, 189, 248, 0.15); color: #7dd3fc; }
+        .tag-flashcard { background: rgba(251, 191, 36, 0.15); color: #fde68a; }
+
+        .card-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-subtitle {
+            font-size: 0.85rem;
+            color: var(--amber);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .card-desc {
+            font-size: 0.88rem;
+            color: #cbd5e1;
+            line-height: 1.55;
+            margin-bottom: 18px;
+        }
+
+        .card-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin-bottom: 24px;
+        }
+
+        .card-features li {
+            font-size: 0.82rem;
+            color: #94a3b8;
+            display: flex;
+            align-items: flex-start;
+            gap: 7px;
+        }
+
+        .card-features li strong {
+            color: #e2e8f0;
+        }
+
+        .card-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 20px;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            text-decoration: none;
+            transition: all 0.25s;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-vocab {
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+            color: #ffffff;
+        }
+        .btn-vocab:hover {
+            background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+        }
+
+        .btn-quiz {
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+            color: #ffffff;
+        }
+        .btn-quiz:hover {
+            background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.45);
+        }
+
+        .btn-flashcard {
+            background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+            color: #111827;
+        }
+        .btn-flashcard:hover {
+            background: linear-gradient(135deg, #b45309 0%, #d97706 100%);
+            color: #ffffff;
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+        }
+
+        /* Study Flow Guide */
+        .flow-card {
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .flow-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--amber);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flow-steps {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        @media (min-width: 640px) {
+            .flow-steps {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .step-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 14px;
+            font-size: 0.85rem;
+        }
+
+        .step-num {
+            display: inline-block;
+            font-weight: 900;
+            font-size: 0.75rem;
+            background: var(--amber);
+            color: #111827;
+            padding: 2px 7px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+        }
+
+        .step-text {
+            color: #e2e8f0;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .step-desc {
+            color: #94a3b8;
+            font-size: 0.78rem;
+            line-height: 1.45;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.82rem;
+            color: #64748b;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Header -->
+        <header>
+            <div class="badge-pill">
+                <span>🎓</span> 116 升科大四技 ‧ 統測升學衝刺
+            </div>
+            <h1>三年級 觀光餐旅業導論</h1>
+            <div class="subtitle">
+                數位自主學習與闖關遊戲中心 — 三大經典遊戲平台整合，助你掌握全冊單字與學科精熟！
+            </div>
+            <div class="banner-tip">
+                <span>⚡ 提示：無論身處哪一個遊戲頁面，皆可透過「跨遊戲切換面板」隨時自由切換！</span>
+            </div>
+        </header>
+
+        <!-- 3-Game Selection Cards -->
+        <div class="games-grid">
+            
+            <!-- Game 1: Vocab RPG Game -->
+            <div class="game-card card-vocab">
+                <div>
+                    <div class="card-header">
+                        <div class="card-icon icon-vocab">🎯</div>
+                        <span class="tag-status tag-vocab">冒險闖關</span>
+                    </div>
+                    <h2 class="card-title">單字闖關遊戲</h2>
+                    <div class="card-subtitle">RPG 地圖關卡 ‧ 連擊連勝競技</div>
+                    <p class="card-desc">
+                        遊戲化解鎖地圖，需獲得 85 分以上解鎖下一關。支援閱讀認字與聽音辨字雙模式，具備手速連擊與即時排行榜！
+                    </p>
+                    <ul class="card-features">
+                        <li><span>🗺️</span> <strong>單元地圖關卡</strong>：循序漸進解鎖下一關</li>
+                        <li><span>🎧</span> <strong>雙重遊玩模式</strong>：閱讀認字 & 聽音辨字</li>
+                        <li><span>🔥</span> <strong>連擊計分系統</strong>：考驗手速與即時反應力</li>
+                        <li><span>🏆</span> <strong>年級雲端排行榜</strong>：即時統計全班累積星數</li>
+                    </ul>
+                </div>
+                <a href="https://abel54575457.github.io/tourism-vocab-game/%E5%96%AE%E5%AD%97%E9%97%96%E9%97%9C%E9%81%8A%E6%88%B2_v2.html" class="card-btn btn-vocab">
+                    <span>🎮 進入單字闖關遊戲</span>
+                    <span>→</span>
+                </a>
+            </div>
+
+            <!-- Game 2: Quiz System -->
+            <div class="game-card card-quiz">
+                <div>
+                    <div class="card-header">
+                        <div class="card-icon icon-quiz">📝</div>
+                        <span class="tag-status tag-quiz">題庫模擬考</span>
+                    </div>
+                    <h2 class="card-title">學科小考測驗系統</h2>
+                    <div class="card-subtitle">歷屆大考全真題庫 ‧ 章節檢測</div>
+                    <p class="card-desc">
+                        專為觀光餐旅業導論學科打造的線上小考測驗，涵蓋全冊大考題庫，自動即時計分、錯題詳解與全台高中職聯賽榮譽榜。
+                    </p>
+                    <ul class="card-features">
+                        <li><span>📚</span> <strong>全真章節試題</strong>：分章測驗與綜合大會考</li>
+                        <li><span>⏱️</span> <strong>模擬統測考場</strong>：倒數計時與即時自動批改</li>
+                        <li><span>💡</span> <strong>詳細考題解析</strong>：交卷立即掌握弱點補強</li>
+                        <li><span>🏫</span> <strong>校際榮譽榜</strong>：與全國觀光餐旅科同學同台競爭</li>
+                    </ul>
+                </div>
+                <a href="https://abel54575457.github.io/tourism-quiz/index.html" class="card-btn btn-quiz">
+                    <span>📝 進入學科小考測驗</span>
+                    <span>→</span>
+                </a>
+            </div>
+
+            <!-- Game 3: FlashCard Pro -->
+            <div class="game-card card-flashcard">
+                <div>
+                    <div class="card-header">
+                        <div class="card-icon icon-flashcard">🎴</div>
+                        <span class="tag-status tag-flashcard">全冊記憶系統</span>
+                    </div>
+                    <h2 class="card-title">FlashCard Pro 字卡</h2>
+                    <div class="card-subtitle">2,196 單字 ‧ 萊特納間隔重複記憶</div>
+                    <p class="card-desc">
+                        依據最新單字手冊全書 8 大章、130 個小節分類逐字整理！支援 3D 翻卡預習(斷點續刷)、聽力四選一與雙語連連看 (Fast-Tap)。
+                    </p>
+                    <ul class="card-features">
+                        <li><span>📖</span> <strong>收錄 2,196 核心字</strong>：支援小節針對性特訓</li>
+                        <li><span>🧠</span> <strong>萊特納間隔重複</strong>：Box 1~5 建立長期永久記憶</li>
+                        <li><span>🧩</span> <strong>三大專注模式</strong>：翻卡記憶、聽力測驗、雙語連連看</li>
+                        <li><span>🗣️</span> <strong>美式/法式原生發音</strong>：KK/IPA 音標標註與斷點續刷</li>
+                    </ul>
+                </div>
+                <a href="https://abel54575457.github.io/flashcard-pro-grade3/" class="card-btn btn-flashcard">
+                    <span>🚀 進入 FlashCard Pro</span>
+                    <span>→</span>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Study Recommended Flow -->
+        <div class="flow-card">
+            <div class="flow-title">
+                <span>💡</span> 三年級推薦自主學習 3 步驟
+            </div>
+            <div class="flow-steps">
+                <div class="step-item">
+                    <span class="step-num">Step 1</span>
+                    <div class="step-text">🎴 FlashCard Pro 單字精熟</div>
+                    <div class="step-desc">利用 3D 翻卡、聽力和雙語連連看，每天預習或複習指定章節與小節的專用術語及代碼。</div>
+                </div>
+                <div class="step-item">
+                    <span class="step-num">Step 2</span>
+                    <div class="step-text">🎯 單字闖關遊戲 手速挑戰</div>
+                    <div class="step-desc">進入闖關地圖進行即時辨字挑戰，達到 85 分解鎖新關卡，並挑戰全班連擊最高分！</div>
+                </div>
+                <div class="step-item">
+                    <span class="step-num">Step 3</span>
+                    <div class="step-text">📝 學科小考測驗 實力檢定</div>
+                    <div class="step-desc">考前進入題庫小考系統進行模擬測驗，檢視觀光法規與專業概念吸收度，衝刺統測滿分！</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            觀光餐旅業導論數位自主學習系統 ‧ 國立臺南大學附屬高級中學 三年級複習專區 ‧ 祝同學們金榜題名！
+        </footer>
+
+    </div>
+
+</body>
+</html>
