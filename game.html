@@ -584,7 +584,8 @@
                         <p id="displayStudentSchool">學校名稱</p>
                     </div>
                 </div>
-                <div style="display: flex; gap: 8px;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;">
+                    <a href="portal.html" class="btn btn-outline" style="font-weight: 700;">🌟 學習大廳</a>
                     <a href="index.html" class="btn btn-outline">🏆 回榮譽榜</a>
                     <button onclick="handleLogout()" class="btn btn-danger" style="padding: 8px 12px; font-size: 0.85rem;">登出</button>
                 </div>
@@ -716,6 +717,73 @@
             unlockedLevel: parseInt(localStorage.getItem("game_unlocked_level") || "1")
         };
 
+        // Try reading SSO session or URL parameters if currentUser is not set
+        if (!currentUser.username) {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get("guest") === "1") {
+                const guestId = "guest_" + Math.floor(1000 + Math.random() * 9000);
+                currentUser = {
+                    username: guestId,
+                    name: "訪客體驗",
+                    school: "訪客專區 (試玩)",
+                    unlockedLevel: 10
+                };
+            } else if (urlParams.get("seat")) {
+                const s = String(urlParams.get("seat")).padStart(2, '0');
+                currentUser = {
+                    username: "student_305_" + s,
+                    name: s + " 號同學",
+                    school: "國立臺南大學附屬高中",
+                    unlockedLevel: 1
+                };
+            } else {
+                try {
+                    const ssoRaw = localStorage.getItem("tourism_sso_identity");
+                    if (ssoRaw) {
+                        const sso = JSON.parse(ssoRaw);
+                        if (sso.type === "guest") {
+                            currentUser = {
+                                username: "guest_" + Math.floor(1000 + Math.random() * 9000),
+                                name: "訪客體驗",
+                                school: "訪客專區 (試玩)",
+                                unlockedLevel: 10
+                            };
+                        } else if (sso.type === "external") {
+                            currentUser = {
+                                username: "ext_" + (sso.school || "全國高中職") + "_" + (sso.name || "選手"),
+                                name: sso.name || "選手",
+                                school: sso.school || "全國高中職",
+                                unlockedLevel: 10
+                            };
+                        } else if (sso.seat) {
+                            const s = String(sso.seat).padStart(2, '0');
+                            currentUser = {
+                                username: "student_305_" + s,
+                                name: s + " 號同學",
+                                school: "國立臺南大學附屬高中",
+                                unlockedLevel: 1
+                            };
+                        }
+                    }
+                } catch (e) {
+                    console.error("SSO parse error", e);
+                }
+            }
+
+            if (currentUser.username) {
+                localStorage.setItem("game_username", currentUser.username);
+                localStorage.setItem("game_user_name", currentUser.name);
+                localStorage.setItem("game_user_school", currentUser.school);
+                localStorage.setItem("game_unlocked_level", currentUser.unlockedLevel);
+            }
+        }
+
+        // External & Guest users get all levels unlocked (level 10)
+        if (currentUser.username && (currentUser.username.startsWith("ext_") || currentUser.username.startsWith("guest_"))) {
+            currentUser.unlockedLevel = Math.max(currentUser.unlockedLevel, 10);
+            localStorage.setItem("game_unlocked_level", currentUser.unlockedLevel);
+        }
+
         if (!currentUser.username) {
             window.location.href = "index.html";
         }
@@ -728,8 +796,8 @@
             db.ref(`users/${currentUser.username}`).on('value', snapshot => {
                 const data = snapshot.val();
                 if (data && data.unlocked_level) {
-                    currentUser.unlockedLevel = data.unlocked_level;
-                    localStorage.setItem("game_unlocked_level", data.unlocked_level);
+                    currentUser.unlockedLevel = Math.max(currentUser.unlockedLevel, data.unlocked_level);
+                    localStorage.setItem("game_unlocked_level", currentUser.unlockedLevel);
                     renderChapterGrid();
                 }
             });
@@ -973,6 +1041,17 @@
                     completed_at: firebase.database.ServerValue.TIMESTAMP
                 };
                 db.ref("scores").push(scoreRecord);
+            }
+
+            // Sync with Portal Grand Championship
+            try {
+                let lvlScores = JSON.parse(localStorage.getItem("game_my_quiz_level_scores") || "{}");
+                lvlScores[currentLevel] = Math.max(lvlScores[currentLevel] || 0, score);
+                localStorage.setItem("game_my_quiz_level_scores", JSON.stringify(lvlScores));
+                let totalQuiz = Object.values(lvlScores).reduce((a, b) => a + Number(b), 0);
+                localStorage.setItem("game_my_quiz_score", String(totalQuiz));
+            } catch (e) {
+                console.error("Local score cache error", e);
             }
 
             // Render Wrong Questions Review
