@@ -2,26 +2,32 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>三年級 觀光餐旅業導論 — 數位自主學習與闖關遊戲中心</title>
-    <meta name="description" content="專為三年級學生統測升學與自主複習打造的三合一數位學習平台：單字闖關遊戲、學科小考題庫、FlashCard Pro 全冊單字記憶卡。">
+    <meta name="description" content="專為三年級學生統測升學與自主複習打造的三合一數位學習平台：單字闖關遊戲、學科小考題庫、FlashCard Pro 全冊單字記憶卡。支援 SSO 單一登入與訪客試玩模式！">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --bg: #090d16;
+            --bg: #070a14;
             --surface: rgba(255, 255, 255, 0.04);
-            --surface-hover: rgba(255, 255, 255, 0.08);
-            --border: rgba(255, 255, 255, 0.09);
-            --border-hover: rgba(251, 191, 36, 0.4);
-            --text: #f3f4f6;
+            --surface-hover: rgba(255, 255, 255, 0.07);
+            --surface-active: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(251, 191, 36, 0.45);
+            --text: #f8fafc;
             --text-sub: #94a3b8;
+            --text-muted: #64748b;
             --amber: #fbbf24;
+            --amber-glow: rgba(251, 191, 36, 0.35);
             --indigo: #6366f1;
-            --emerald: #10b981;
+            --indigo-glow: rgba(99, 102, 241, 0.35);
             --sky: #38bdf8;
-            --rose: #f43f5e;
+            --sky-glow: rgba(56, 189, 248, 0.35);
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.35);
         }
 
         * {
@@ -35,90 +41,305 @@
         body {
             background-color: var(--bg);
             background-image: 
-                radial-gradient(circle at 20% 15%, rgba(99, 102, 241, 0.18) 0%, transparent 40%),
-                radial-gradient(circle at 80% 25%, rgba(251, 191, 36, 0.14) 0%, transparent 35%),
-                radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.12) 0%, transparent 45%);
+                radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.16) 0%, transparent 45%),
+                radial-gradient(circle at 85% 20%, rgba(251, 191, 36, 0.14) 0%, transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 40%, rgba(56, 189, 248, 0.06) 0%, transparent 60%);
             color: var(--text);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding: 24px 16px 40px;
+            padding: 20px 16px 50px;
+            overflow-x: hidden;
         }
 
         .container {
             width: 100%;
-            max-width: 1140px;
+            max-width: 1180px;
             margin: 0 auto;
             flex: 1;
+        }
+
+        /* Ambient Glow Highlights */
+        .ambient-mesh {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
         }
 
         /* Top Header */
         header {
             text-align: center;
-            padding: 24px 12px 36px;
+            padding: 24px 12px 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .badges-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 18px;
         }
 
         .badge-pill {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             padding: 6px 14px;
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid rgba(251, 191, 36, 0.3);
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px solid rgba(251, 191, 36, 0.28);
             border-radius: 9999px;
             color: var(--amber);
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 700;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            margin-bottom: 14px;
+            letter-spacing: 0.04em;
+        }
+
+        .badge-pill.sso {
+            background: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #34d399;
+        }
+
+        .badge-pill.guest {
+            background: rgba(99, 102, 241, 0.08);
+            border-color: rgba(99, 102, 241, 0.3);
+            color: #a5b4fc;
         }
 
         h1 {
-            font-size: 2.2rem;
+            font-size: 2.3rem;
             font-weight: 900;
             line-height: 1.25;
             letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #ffffff 30%, #cbd5e1 70%, #94a3b8 100%);
+            background: linear-gradient(135deg, #ffffff 30%, #e2e8f0 70%, #94a3b8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         @media (min-width: 640px) {
-            h1 { font-size: 2.75rem; }
+            h1 { font-size: 3.1rem; }
         }
 
         .subtitle {
-            font-size: 1rem;
+            font-size: 1.05rem;
             color: var(--text-sub);
-            max-width: 640px;
-            margin: 0 auto 16px;
-            line-height: 1.6;
+            max-width: 720px;
+            margin: 0 auto 20px;
+            line-height: 1.65;
         }
 
-        .banner-tip {
+        /* ================= SSO IDENTITY DASHBOARD HUB ================= */
+        .sso-hub {
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 18px 24px;
+            margin-bottom: 34px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        @media (min-width: 768px) {
+            .sso-hub {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                padding: 18px 28px;
+            }
+        }
+
+        .sso-hub:hover {
+            border-color: rgba(255, 255, 255, 0.18);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .sso-user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .sso-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7rem;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.1));
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s;
+        }
+
+        .sso-avatar.guest {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(129, 140, 248, 0.1));
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        .sso-avatar.none {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sso-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .sso-title-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .sso-name {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+        }
+
+        .sso-badge {
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 3px 9px;
+            border-radius: 20px;
+            letter-spacing: 0.03em;
+        }
+
+        .sso-badge.student {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .sso-badge.guest {
+            background: rgba(251, 191, 36, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .sso-badge.none {
+            background: rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .sso-desc {
+            font-size: 0.82rem;
+            color: var(--text-sub);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sync-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 10px #10b981;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .sso-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-hub {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 8px 16px;
-            font-size: 0.82rem;
-            color: #cbd5e1;
+            justify-content: center;
+            gap: 6px;
+            padding: 9px 16px;
+            border-radius: 12px;
+            font-size: 0.84rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            user-select: none;
         }
 
-        /* 3-Game Grid */
+        .btn-hub-student {
+            background: rgba(16, 185, 129, 0.12);
+            border-color: rgba(16, 185, 129, 0.35);
+            color: #34d399;
+        }
+        .btn-hub-student:hover {
+            background: rgba(16, 185, 129, 0.25);
+            border-color: rgba(16, 185, 129, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-hub-guest {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.2));
+            border-color: rgba(251, 191, 36, 0.4);
+            color: #fbbf24;
+        }
+        .btn-hub-guest:hover {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.28), rgba(245, 158, 11, 0.35));
+            border-color: rgba(251, 191, 36, 0.7);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(251, 191, 36, 0.25);
+        }
+
+        .btn-hub-outline {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
+            color: #cbd5e1;
+        }
+        .btn-hub-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        /* ================= 3-GAME GRID ================= */
         .games-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 22px;
-            margin-top: 10px;
-            margin-bottom: 36px;
+            gap: 24px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
         }
 
-        @media (min-width: 860px) {
+        @media (min-width: 900px) {
             .games-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
@@ -127,23 +348,35 @@
         .game-card {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 28px 24px;
+            border-radius: 26px;
+            padding: 30px 26px 26px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
             transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
         }
 
         .game-card:hover {
-            transform: translateY(-6px);
+            transform: translateY(-8px);
             background: var(--surface-hover);
-            border-color: var(--border-hover);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(251, 191, 36, 0.12);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.55);
+        }
+
+        .card-vocab:hover {
+            border-color: rgba(99, 102, 241, 0.5);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.55), 0 0 35px var(--indigo-glow);
+        }
+        .card-quiz:hover {
+            border-color: rgba(56, 189, 248, 0.5);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.55), 0 0 35px var(--sky-glow);
+        }
+        .card-flashcard:hover {
+            border-color: rgba(251, 191, 36, 0.5);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.55), 0 0 35px var(--amber-glow);
         }
 
         .game-card::before {
@@ -153,7 +386,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            border-radius: 24px 24px 0 0;
+            border-radius: 26px 26px 0 0;
         }
 
         .card-vocab::before {
@@ -170,74 +403,94 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
 
         .card-icon {
-            width: 54px;
-            height: 54px;
-            border-radius: 18px;
+            width: 58px;
+            height: 58px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            font-size: 1.9rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
         }
 
-        .icon-vocab { background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.4); }
-        .icon-quiz { background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); }
-        .icon-flashcard { background: rgba(251, 191, 36, 0.2); border: 1px solid rgba(251, 191, 36, 0.4); }
+        .icon-vocab { background: rgba(99, 102, 241, 0.18); border: 1px solid rgba(99, 102, 241, 0.4); }
+        .icon-quiz { background: rgba(56, 189, 248, 0.18); border: 1px solid rgba(56, 189, 248, 0.4); }
+        .icon-flashcard { background: rgba(251, 191, 36, 0.18); border: 1px solid rgba(251, 191, 36, 0.4); }
 
         .tag-status {
             font-size: 0.72rem;
             font-weight: 800;
-            padding: 4px 10px;
-            border-radius: 8px;
+            padding: 5px 12px;
+            border-radius: 20px;
             letter-spacing: 0.05em;
         }
 
-        .tag-vocab { background: rgba(99, 102, 241, 0.15); color: #a5b4fc; }
-        .tag-quiz { background: rgba(56, 189, 248, 0.15); color: #7dd3fc; }
-        .tag-flashcard { background: rgba(251, 191, 36, 0.15); color: #fde68a; }
+        .tag-vocab { background: rgba(99, 102, 241, 0.18); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.3); }
+        .tag-quiz { background: rgba(56, 189, 248, 0.18); color: #7dd3fc; border: 1px solid rgba(56, 189, 248, 0.3); }
+        .tag-flashcard { background: rgba(251, 191, 36, 0.18); color: #fde68a; border: 1px solid rgba(251, 191, 36, 0.3); }
 
         .card-title {
-            font-size: 1.35rem;
-            font-weight: 800;
+            font-size: 1.45rem;
+            font-weight: 900;
             color: #ffffff;
             margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            letter-spacing: -0.01em;
         }
 
         .card-subtitle {
-            font-size: 0.85rem;
-            color: var(--amber);
+            font-size: 0.86rem;
             font-weight: 700;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
+        .card-vocab .card-subtitle { color: #a5b4fc; }
+        .card-quiz .card-subtitle { color: #7dd3fc; }
+        .card-flashcard .card-subtitle { color: var(--amber); }
+
         .card-desc {
-            font-size: 0.88rem;
+            font-size: 0.89rem;
             color: #cbd5e1;
-            line-height: 1.55;
-            margin-bottom: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .card-stats-pill {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 8px 12px;
+            margin-bottom: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #94a3b8;
+        }
+
+        .card-stats-pill span strong {
+            color: #f1f5f9;
         }
 
         .card-features {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 7px;
-            margin-bottom: 24px;
+            gap: 9px;
+            margin-bottom: 26px;
         }
 
         .card-features li {
-            font-size: 0.82rem;
+            font-size: 0.83rem;
             color: #94a3b8;
             display: flex;
             align-items: flex-start;
-            gap: 7px;
+            gap: 8px;
+            line-height: 1.45;
         }
 
         .card-features li strong {
@@ -249,14 +502,17 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            padding: 14px 20px;
+            width: 100%;
+            padding: 15px 22px;
             border-radius: 16px;
-            font-size: 0.95rem;
+            font-size: 0.98rem;
             font-weight: 800;
             text-decoration: none;
-            transition: all 0.25s;
+            transition: all 0.28s ease;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+            border: none;
+            outline: none;
         }
 
         .btn-vocab {
@@ -265,7 +521,8 @@
         }
         .btn-vocab:hover {
             background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+            box-shadow: 0 8px 24px rgba(79, 70, 229, 0.55);
+            transform: translateY(-2px);
         }
 
         .btn-quiz {
@@ -274,7 +531,8 @@
         }
         .btn-quiz:hover {
             background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
-            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.45);
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.55);
+            transform: translateY(-2px);
         }
 
         .btn-flashcard {
@@ -284,32 +542,35 @@
         .btn-flashcard:hover {
             background: linear-gradient(135deg, #b45309 0%, #d97706 100%);
             color: #ffffff;
-            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.55);
+            transform: translateY(-2px);
         }
 
-        /* Study Flow Guide */
+        /* ================= STUDY FLOW GUIDE ================= */
         .flow-card {
             background: rgba(255, 255, 255, 0.025);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 24px;
+            border-radius: 24px;
+            padding: 26px 24px;
+            margin-bottom: 28px;
+            position: relative;
+            z-index: 1;
         }
 
         .flow-title {
-            font-size: 1.05rem;
+            font-size: 1.15rem;
             font-weight: 800;
             color: var(--amber);
-            margin-bottom: 14px;
+            margin-bottom: 18px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .flow-steps {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 12px;
+            gap: 14px;
         }
 
         @media (min-width: 640px) {
@@ -320,62 +581,321 @@
 
         .step-item {
             background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 14px;
-            padding: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px;
             font-size: 0.85rem;
+            transition: all 0.25s;
+        }
+
+        .step-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
         }
 
         .step-num {
             display: inline-block;
             font-weight: 900;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             background: var(--amber);
             color: #111827;
-            padding: 2px 7px;
+            padding: 3px 8px;
             border-radius: 6px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .step-text {
-            color: #e2e8f0;
-            font-weight: 700;
-            margin-bottom: 4px;
+            color: #f1f5f9;
+            font-weight: 800;
+            font-size: 0.95rem;
+            margin-bottom: 6px;
         }
 
         .step-desc {
             color: #94a3b8;
-            font-size: 0.78rem;
-            line-height: 1.45;
+            font-size: 0.8rem;
+            line-height: 1.5;
         }
 
+        /* Footer */
         footer {
             text-align: center;
             font-size: 0.82rem;
             color: #64748b;
-            padding-top: 10px;
+            padding-top: 15px;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        footer strong {
+            color: #94a3b8;
+        }
+
+        /* ================= MODAL: SEAT SELECTION ================= */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(7, 10, 20, 0.82);
+            backdrop-filter: blur(14px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-backdrop.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-box {
+            background: #0f1527;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 28px;
+            width: 100%;
+            max-width: 520px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(99, 102, 241, 0.2);
+            padding: 28px 24px;
+            transform: scale(0.95);
+            transition: transform 0.25s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-backdrop.show .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .modal-title {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            color: #94a3b8;
+            font-size: 1.4rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+
+        .modal-guest-callout {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.12), rgba(245, 158, 11, 0.16));
+            border: 1px solid rgba(251, 191, 36, 0.35);
+            border-radius: 18px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 12px;
+        }
+
+        .modal-guest-callout-text {
+            font-size: 0.82rem;
+            color: #fde68a;
+            line-height: 1.45;
+        }
+
+        .modal-guest-callout-text strong {
+            color: #ffffff;
+            font-size: 0.88rem;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .btn-callout-guest {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #111827;
+            font-weight: 800;
+            font-size: 0.82rem;
+            padding: 8px 14px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .btn-callout-guest:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        }
+
+        .seat-grid-label {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .seat-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        @media (min-width: 480px) {
+            .seat-grid {
+                grid-template-columns: repeat(7, 1fr);
+            }
+        }
+
+        .seat-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #cbd5e1;
+            border-radius: 12px;
+            padding: 10px 0;
+            font-size: 0.92rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .seat-btn:hover {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.4);
+            color: #34d399;
+            transform: translateY(-2px);
+        }
+
+        .seat-btn.selected {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-color: #34d399;
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45);
+        }
+
+        .modal-submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            border-radius: 16px;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
+            transition: all 0.25s;
+        }
+
+        .modal-submit-btn:hover {
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.55);
+            transform: translateY(-2px);
+        }
+
+        /* ================= FLOATING TOAST ================= */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px);
+            color: #f8fafc;
+            padding: 14px 22px;
+            border-radius: 18px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            z-index: 200;
+            opacity: 0;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
         }
     </style>
 </head>
 <body>
 
+    <div class="ambient-mesh"></div>
+
     <div class="container">
         
         <!-- Header -->
         <header>
-            <div class="badge-pill">
-                <span>🎓</span> 116 升科大四技 ‧ 統測升學衝刺
+            <div class="badges-row">
+                <div class="badge-pill">
+                    <span>🎓</span> 116 升科大四技 ‧ 統測升學衝刺
+                </div>
+                <div class="badge-pill sso">
+                    <span>⚡</span> 三遊連通 SSO 單一登入
+                </div>
+                <div class="badge-pill guest">
+                    <span>✨</span> 訪客一鍵試玩支援
+                </div>
             </div>
             <h1>三年級 觀光餐旅業導論</h1>
             <div class="subtitle">
-                數位自主學習與闖關遊戲中心 — 三大經典遊戲平台整合，助你掌握全冊單字與學科精熟！
-            </div>
-            <div class="banner-tip">
-                <span>⚡ 提示：無論身處哪一個遊戲頁面，皆可透過「跨遊戲切換面板」隨時自由切換！</span>
+                數位自主學習與闖關遊戲中心 — 三大經典學習平台無縫整合，一次登入即可直接暢玩！
             </div>
         </header>
 
-        <!-- 3-Game Selection Cards -->
+        <!-- ================= SSO IDENTITY DASHBOARD HUB ================= -->
+        <div class="sso-hub" id="ssoHub">
+            <div class="sso-user-info">
+                <div class="sso-avatar none" id="ssoAvatar">👋</div>
+                <div class="sso-meta">
+                    <div class="sso-title-row">
+                        <span class="sso-name" id="ssoName">尚未設定登入身分</span>
+                        <span class="sso-badge none" id="ssoBadge">未連線</span>
+                    </div>
+                    <div class="sso-desc" id="ssoDesc">
+                        <span>請先點選學生座號，或一鍵切換訪客試玩，3 款遊戲免重登隨選即玩！</span>
+                    </div>
+                </div>
+            </div>
+            <div class="sso-actions" id="ssoActions">
+                <!-- Dynamically updated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- ================= 3-GAME SELECTION CARDS ================= -->
         <div class="games-grid">
             
             <!-- Game 1: Vocab RPG Game -->
@@ -383,24 +903,31 @@
                 <div>
                     <div class="card-header">
                         <div class="card-icon icon-vocab">🎯</div>
-                        <span class="tag-status tag-vocab">冒險闖關</span>
+                        <span class="tag-status tag-vocab">RPG 關卡冒險</span>
                     </div>
                     <h2 class="card-title">單字闖關遊戲</h2>
-                    <div class="card-subtitle">RPG 地圖關卡 ‧ 連擊連勝競技</div>
+                    <div class="card-subtitle">49 個單元地圖關卡 ‧ 連擊連勝競技</div>
                     <p class="card-desc">
-                        遊戲化解鎖地圖，需獲得 85 分以上解鎖下一關。支援閱讀認字與聽音辨字雙模式，具備手速連擊與即時排行榜！
+                        遊戲化解鎖全冊章節，需獲得 85 分以上解鎖下一關。支援閱讀認字與聽音辨字雙模式，具備手速連擊與即時排行榜！
                     </p>
+                    <div class="card-stats-pill">
+                        <span>全書 <strong>49 關</strong></span>
+                        <span>|</span>
+                        <span><strong>閱讀 & 聽力</strong> 雙模</span>
+                        <span>|</span>
+                        <span>即時 <strong>連擊 PK</strong></span>
+                    </div>
                     <ul class="card-features">
-                        <li><span>🗺️</span> <strong>單元地圖關卡</strong>：循序漸進解鎖下一關</li>
-                        <li><span>🎧</span> <strong>雙重遊玩模式</strong>：閱讀認字 & 聽音辨字</li>
-                        <li><span>🔥</span> <strong>連擊計分系統</strong>：考驗手速與即時反應力</li>
-                        <li><span>🏆</span> <strong>年級雲端排行榜</strong>：即時統計全班累積星數</li>
+                        <li><span>🗺️</span> <strong>單元地圖循序闖關</strong>：訪客免等待全關卡解鎖</li>
+                        <li><span>🎧</span> <strong>美式發音聽音辨字</strong>：強化聽力辨析速度與語感</li>
+                        <li><span>🔥</span> <strong>連擊計分競技激勵</strong>：考驗手速與瞬間反射神經</li>
+                        <li><span>🏆</span> <strong>年級雲端榮譽榜</strong>：即時記錄班級累積積分</li>
                     </ul>
                 </div>
-                <a href="https://abel54575457.github.io/tourism-vocab-game/%E5%96%AE%E5%AD%97%E9%97%96%E9%97%9C%E9%81%8A%E6%88%B2_v2.html" class="card-btn btn-vocab">
+                <button type="button" class="card-btn btn-vocab" onclick="launchGame('vocab')">
                     <span>🎮 進入單字闖關遊戲</span>
                     <span>→</span>
-                </a>
+                </button>
             </div>
 
             <!-- Game 2: Quiz System -->
@@ -408,24 +935,31 @@
                 <div>
                     <div class="card-header">
                         <div class="card-icon icon-quiz">📝</div>
-                        <span class="tag-status tag-quiz">題庫模擬考</span>
+                        <span class="tag-status tag-quiz">全真模擬考</span>
                     </div>
                     <h2 class="card-title">學科小考測驗系統</h2>
-                    <div class="card-subtitle">歷屆大考全真題庫 ‧ 章節檢測</div>
+                    <div class="card-subtitle">歷屆大考題庫 ‧ 章節線上全真模擬考</div>
                     <p class="card-desc">
                         專為觀光餐旅業導論學科打造的線上小考測驗，涵蓋全冊大考題庫，自動即時計分、錯題詳解與全台高中職聯賽榮譽榜。
                     </p>
+                    <div class="card-stats-pill">
+                        <span><strong>大考題庫</strong> 隨機出題</span>
+                        <span>|</span>
+                        <span><strong>即時批改</strong> 與詳解</span>
+                        <span>|</span>
+                        <span><strong>校際榮譽榜</strong></span>
+                    </div>
                     <ul class="card-features">
-                        <li><span>📚</span> <strong>全真章節試題</strong>：分章測驗與綜合大會考</li>
-                        <li><span>⏱️</span> <strong>模擬統測考場</strong>：倒數計時與即時自動批改</li>
-                        <li><span>💡</span> <strong>詳細考題解析</strong>：交卷立即掌握弱點補強</li>
-                        <li><span>🏫</span> <strong>校際榮譽榜</strong>：與全國觀光餐旅科同學同台競爭</li>
+                        <li><span>📚</span> <strong>章節專題與綜合大考</strong>：精確驗收概念掌握度</li>
+                        <li><span>⏱️</span> <strong>擬真考場倒數計時</strong>：模擬正式統測考場臨場感</li>
+                        <li><span>💡</span> <strong>即時自動批改與錯題析</strong>：交卷立知盲點補強</li>
+                        <li><span>🏫</span> <strong>全台高中職聯賽</strong>：與各校觀光餐旅科同學同台 PK</li>
                     </ul>
                 </div>
-                <a href="https://abel54575457.github.io/tourism-quiz/index.html" class="card-btn btn-quiz">
+                <button type="button" class="card-btn btn-quiz" onclick="launchGame('quiz')">
                     <span>📝 進入學科小考測驗</span>
                     <span>→</span>
-                </a>
+                </button>
             </div>
 
             <!-- Game 3: FlashCard Pro -->
@@ -436,55 +970,470 @@
                         <span class="tag-status tag-flashcard">全冊記憶系統</span>
                     </div>
                     <h2 class="card-title">FlashCard Pro 字卡</h2>
-                    <div class="card-subtitle">2,196 單字 ‧ 萊特納間隔重複記憶</div>
+                    <div class="card-subtitle">2,196 單字 ‧ 萊特納間隔重複記憶盒</div>
                     <p class="card-desc">
                         依據最新單字手冊全書 8 大章、130 個小節分類逐字整理！支援 3D 翻卡預習(斷點續刷)、聽力四選一與雙語連連看 (Fast-Tap)。
                     </p>
+                    <div class="card-stats-pill">
+                        <span><strong>2,196</strong> 核心字</span>
+                        <span>|</span>
+                        <span><strong>8大章 130小節</strong></span>
+                        <span>|</span>
+                        <span><strong>美 / 法</strong> 原生發音</span>
+                    </div>
                     <ul class="card-features">
-                        <li><span>📖</span> <strong>收錄 2,196 核心字</strong>：支援小節針對性特訓</li>
-                        <li><span>🧠</span> <strong>萊特納間隔重複</strong>：Box 1~5 建立長期永久記憶</li>
-                        <li><span>🧩</span> <strong>三大專注模式</strong>：翻卡記憶、聽力測驗、雙語連連看</li>
+                        <li><span>📖</span> <strong>收錄 2,196 核心字</strong>：支援小節針對性逐字特訓</li>
+                        <li><span>🧠</span> <strong>萊特納間隔記憶 (Box 1~5)</strong>：科學化建立長期永久記憶</li>
+                        <li><span>🧩</span> <strong>三大專注模式</strong>：3D 翻卡、聽力四選一、雙語連連看</li>
                         <li><span>🗣️</span> <strong>美式/法式原生發音</strong>：KK/IPA 音標標註與斷點續刷</li>
                     </ul>
                 </div>
-                <a href="https://abel54575457.github.io/flashcard-pro-grade3/" class="card-btn btn-flashcard">
+                <button type="button" class="card-btn btn-flashcard" onclick="launchGame('flashcard')">
                     <span>🚀 進入 FlashCard Pro</span>
                     <span>→</span>
-                </a>
+                </button>
             </div>
 
         </div>
 
-        <!-- Study Recommended Flow -->
+        <!-- ================= RECOMMENDED STUDY FLOW ================= -->
         <div class="flow-card">
             <div class="flow-title">
-                <span>💡</span> 三年級推薦自主學習 3 步驟
+                <span>💡</span> 三年級推薦自主學習 3 步驟黃金動線
             </div>
             <div class="flow-steps">
                 <div class="step-item">
                     <span class="step-num">Step 1</span>
                     <div class="step-text">🎴 FlashCard Pro 單字精熟</div>
-                    <div class="step-desc">利用 3D 翻卡、聽力和雙語連連看，每天預習或複習指定章節與小節的專用術語及代碼。</div>
+                    <div class="step-desc">利用 3D 翻卡、聽力和雙語連連看，每天預習或複習指定章節與小節的專用術語及代碼，建立長期記憶。</div>
                 </div>
                 <div class="step-item">
                     <span class="step-num">Step 2</span>
                     <div class="step-text">🎯 單字闖關遊戲 手速挑戰</div>
-                    <div class="step-desc">進入闖關地圖進行即時辨字挑戰，達到 85 分解鎖新關卡，並挑戰全班連擊最高分！</div>
+                    <div class="step-desc">進入闖關地圖進行即時辨字挑戰，達到 85 分解鎖新關卡，並挑戰全班連擊最高分，加深瞬間反應力！</div>
                 </div>
                 <div class="step-item">
                     <span class="step-num">Step 3</span>
                     <div class="step-text">📝 學科小考測驗 實力檢定</div>
-                    <div class="step-desc">考前進入題庫小考系統進行模擬測驗，檢視觀光法規與專業概念吸收度，衝刺統測滿分！</div>
+                    <div class="step-desc">考前進入題庫小考系統進行模擬測驗，檢視觀光法規與專業概念吸收度，查看錯題詳解，衝刺統測滿分！</div>
                 </div>
             </div>
         </div>
 
         <!-- Footer -->
         <footer>
-            觀光餐旅業導論數位自主學習系統 ‧ 國立臺南大學附屬高級中學 三年級複習專區 ‧ 祝同學們金榜題名！
+            觀光餐旅業導論數位自主學習系統 ‧ 國立臺南大學附屬高級中學 三年級複習專區<br>
+            <strong>單一登入 (SSO) 技術支援</strong>：一次登入即可在三大系統間任意暢玩 ‧ 訪客試玩成績不影響正式學生排行榜
         </footer>
 
     </div>
+
+    <!-- ================= SEAT SELECT MODAL ================= -->
+    <div class="modal-backdrop" id="seatModal" onclick="handleModalBackdrop(event)">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span>🎓</span> 三年級學生登入
+                </div>
+                <button class="modal-close" onclick="closeSeatModal()">&times;</button>
+            </div>
+
+            <!-- Guest Shortcut Inside Modal -->
+            <div class="modal-guest-callout">
+                <div class="modal-guest-callout-text">
+                    <strong>不想選座號？</strong>
+                    想快速試玩體驗，免座號免密碼即可全功能暢玩！
+                </div>
+                <button type="button" class="btn-callout-guest" onclick="enableGuestModeFromModal()">
+                    ✨ 訪客一鍵試玩
+                </button>
+            </div>
+
+            <div class="seat-grid-label">
+                <span>請點選您的座號 (01 ~ 35 號)：</span>
+                <span id="selectedSeatPreview" style="color: #34d399; font-weight: 800;"></span>
+            </div>
+
+            <div class="seat-grid" id="seatGrid">
+                <!-- Populated by JS -->
+            </div>
+
+            <button type="button" class="modal-submit-btn" id="confirmSeatBtn" onclick="confirmStudentLogin()">
+                🚀 確認登入並同步 3 款遊戲
+            </button>
+        </div>
+    </div>
+
+    <!-- ================= FLOATING TOAST ================= -->
+    <div class="toast" id="toastBox">
+        <span id="toastIcon">🎉</span>
+        <span id="toastMsg">登入成功！已同步授權 3 款遊戲。</span>
+    </div>
+
+    <script>
+        // Target URLs for the 3 games
+        const GAME_URLS = {
+            vocab: "https://abel54575457.github.io/tourism-vocab-game/%E5%96%AE%E5%AD%97%E9%97%96%E9%97%9C%E9%81%8A%E6%88%B2_v2.html",
+            quiz: "https://abel54575457.github.io/tourism-quiz/game.html",
+            flashcard: "https://abel54575457.github.io/flashcard-pro-grade3/"
+        };
+
+        let tempSelectedSeat = null;
+        let pendingLaunchGame = null;
+
+        // Initialize on load
+        window.addEventListener("DOMContentLoaded", () => {
+            initSeatGrid();
+            refreshHubUI();
+        });
+
+        // 1. Read unified session from localStorage
+        function getUnifiedSession() {
+            try {
+                const raw = localStorage.getItem("tourism_sso_identity");
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && (parsed.type === "student" || parsed.type === "guest")) {
+                        return parsed;
+                    }
+                }
+            } catch (e) {}
+
+            // Fallback: Check if Flashcard Pro had last_seat
+            const fSeat = localStorage.getItem("flashcard_pro_g3_last_seat");
+            if (fSeat) {
+                if (fSeat === "訪客") {
+                    return { type: "guest", seat: "訪客", name: "訪客體驗", grade: 3 };
+                } else {
+                    const pad = String(fSeat).padStart(2, '0');
+                    return { type: "student", seat: pad, name: `${pad} 號同學`, grade: 3 };
+                }
+            }
+
+            // Fallback: Check if Vocab Game had studentSeat
+            const vSeat = localStorage.getItem("studentSeat");
+            if (vSeat) {
+                if (vSeat === "guest") {
+                    return { type: "guest", seat: "訪客", name: "訪客體驗", grade: 3 };
+                } else {
+                    const pad = String(vSeat).padStart(2, '0');
+                    return { type: "student", seat: pad, name: `${pad} 號同學`, grade: 3 };
+                }
+            }
+
+            // Fallback: Check if Quiz had game_username
+            const qUser = localStorage.getItem("game_username");
+            if (qUser) {
+                if (qUser.startsWith("guest_")) {
+                    return { type: "guest", seat: "訪客", name: "訪客體驗", grade: 3 };
+                } else {
+                    const name = localStorage.getItem("game_user_name") || "同學";
+                    const num = name.replace(/[^0-9]/g, "") || "01";
+                    return { type: "student", seat: num.padStart(2, '0'), name: name, grade: 3 };
+                }
+            }
+
+            return null;
+        }
+
+        // 2. Sync session to all 3 games' storage keys
+        function syncSessionToAllGames(session) {
+            if (!session) return;
+
+            if (session.type === "guest") {
+                // Game 1: Vocab
+                localStorage.setItem("studentGrade", "3");
+                localStorage.setItem("studentSeat", "guest");
+
+                // Game 2: Quiz
+                let qId = localStorage.getItem("game_username");
+                if (!qId || !qId.startsWith("guest_")) {
+                    qId = "guest_" + Math.floor(1000 + Math.random() * 9000);
+                }
+                localStorage.setItem("game_username", qId);
+                localStorage.setItem("game_user_name", "訪客試玩體驗");
+                localStorage.setItem("game_user_school", "訪客專區 (試玩)");
+                localStorage.setItem("game_unlocked_level", "10");
+
+                // Game 3: FlashCard Pro
+                localStorage.setItem("flashcard_pro_g3_last_seat", "訪客");
+                if (!localStorage.getItem("flashcard_pro_g3_user_profile_訪客")) {
+                    const guestProfile = {
+                        seatNumber: "訪客",
+                        classCode: "訪客專區",
+                        themeColor: "emerald",
+                        unlockedLevel: 8,
+                        lastActive: new Date().toISOString(),
+                        streakDays: 1,
+                        stars: 0,
+                        progress: { level1: { completed: true, masteryRate: 100, starsEarned: 3 } },
+                        wordStats: {}
+                    };
+                    localStorage.setItem("flashcard_pro_g3_user_profile_訪客", JSON.stringify(guestProfile));
+                }
+
+                // Unified Key
+                localStorage.setItem("tourism_sso_identity", JSON.stringify({
+                    type: "guest",
+                    seat: "訪客",
+                    name: "訪客試玩體驗",
+                    grade: 3,
+                    updatedAt: Date.now()
+                }));
+            } else {
+                const seatStr = String(session.seat).padStart(2, '0');
+                const seatInt = parseInt(seatStr);
+
+                // Game 1: Vocab
+                localStorage.setItem("studentGrade", "3");
+                localStorage.setItem("studentSeat", String(seatInt));
+
+                // Game 2: Quiz
+                localStorage.setItem("game_username", "student_305_" + seatStr);
+                localStorage.setItem("game_user_name", seatStr + " 號同學");
+                localStorage.setItem("game_user_school", "國立臺南大學附屬高中");
+                if (!localStorage.getItem("game_unlocked_level")) {
+                    localStorage.setItem("game_unlocked_level", "1");
+                }
+
+                // Game 3: FlashCard Pro
+                localStorage.setItem("flashcard_pro_g3_last_seat", seatStr);
+
+                // Unified Key
+                localStorage.setItem("tourism_sso_identity", JSON.stringify({
+                    type: "student",
+                    seat: seatStr,
+                    name: seatStr + " 號同學",
+                    grade: 3,
+                    updatedAt: Date.now()
+                }));
+            }
+        }
+
+        // 3. Render and Update SSO Hub UI
+        function refreshHubUI() {
+            const session = getUnifiedSession();
+            const avatar = document.getElementById("ssoAvatar");
+            const nameEl = document.getElementById("ssoName");
+            const badgeEl = document.getElementById("ssoBadge");
+            const descEl = document.getElementById("ssoDesc");
+            const actionsEl = document.getElementById("ssoActions");
+
+            if (session) {
+                // Ensure sync
+                syncSessionToAllGames(session);
+
+                if (session.type === "guest") {
+                    avatar.className = "sso-avatar guest";
+                    avatar.innerText = "✨";
+                    nameEl.innerText = "訪客試玩體驗模式";
+                    badgeEl.className = "sso-badge guest";
+                    badgeEl.innerText = "訪客模式";
+                    descEl.innerHTML = '<span class="sync-pulse"></span> <span>已同步全平台 3 款遊戲免重登直接試玩 (全部關卡解鎖)</span>';
+
+                    actionsEl.innerHTML = `
+                        <button type="button" class="btn-hub btn-hub-student" onclick="openSeatModal()">
+                            <span>🎓</span> 切換學生座號
+                        </button>
+                        <button type="button" class="btn-hub btn-hub-outline" onclick="logoutSession()">
+                            <span>🚪</span> 結束試玩
+                        </button>
+                    `;
+                } else {
+                    avatar.className = "sso-avatar";
+                    avatar.innerText = "🎓";
+                    nameEl.innerText = `三年級 305 班 ‧ ${session.seat} 號同學`;
+                    badgeEl.className = "sso-badge student";
+                    badgeEl.innerText = "正式學生";
+                    descEl.innerHTML = '<span class="sync-pulse"></span> <span>三款遊戲已全數授權連通！點擊下方任一遊戲直接暢玩</span>';
+
+                    actionsEl.innerHTML = `
+                        <button type="button" class="btn-hub btn-hub-outline" onclick="openSeatModal()">
+                            <span>🔄</span> 切換座號
+                        </button>
+                        <button type="button" class="btn-hub btn-hub-guest" onclick="enableGuestMode()">
+                            <span>✨</span> 訪客試玩
+                        </button>
+                        <button type="button" class="btn-hub btn-hub-outline" onclick="logoutSession()">
+                            <span>🚪</span> 登出
+                        </button>
+                    `;
+                }
+            } else {
+                avatar.className = "sso-avatar none";
+                avatar.innerText = "👋";
+                nameEl.innerText = "尚未設定登入身分";
+                badgeEl.className = "sso-badge none";
+                badgeEl.innerText = "未連線";
+                descEl.innerHTML = "<span>請先點選學生座號，或一鍵切換訪客試玩，3 款遊戲免重登隨選即玩！</span>";
+
+                actionsEl.innerHTML = `
+                    <button type="button" class="btn-hub btn-hub-guest" onclick="enableGuestMode()">
+                        <span>✨</span> 訪客一鍵試玩 (免座號)
+                    </button>
+                    <button type="button" class="btn-hub btn-hub-student" onclick="openSeatModal()">
+                        <span>🎓</span> 學生登入 (選座號)
+                    </button>
+                `;
+            }
+        }
+
+        // 4. Quick Enable Guest Mode
+        function enableGuestMode() {
+            const guestSession = {
+                type: "guest",
+                seat: "訪客",
+                name: "訪客試玩體驗",
+                grade: 3
+            };
+            syncSessionToAllGames(guestSession);
+            refreshHubUI();
+            showToast("✨ 訪客模式已啟用！3 款遊戲均已解鎖試玩權限", "✨");
+
+            if (pendingLaunchGame) {
+                const target = pendingLaunchGame;
+                pendingLaunchGame = null;
+                setTimeout(() => doLaunch(target), 400);
+            }
+        }
+
+        function enableGuestModeFromModal() {
+            closeSeatModal();
+            enableGuestMode();
+        }
+
+        // 5. Logout Session
+        function logoutSession() {
+            localStorage.removeItem("tourism_sso_identity");
+            localStorage.removeItem("studentSeat");
+            localStorage.removeItem("game_username");
+            localStorage.removeItem("game_user_name");
+            localStorage.removeItem("flashcard_pro_g3_last_seat");
+            refreshHubUI();
+            showToast("👋 已清除身分紀錄，歡迎隨時重新登入或試玩！", "ℹ️");
+        }
+
+        // 6. Seat Selection Modal
+        function initSeatGrid() {
+            const grid = document.getElementById("seatGrid");
+            grid.innerHTML = "";
+            for (let i = 1; i <= 35; i++) {
+                const pad = String(i).padStart(2, '0');
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "seat-btn";
+                btn.id = `seatBtn_${pad}`;
+                btn.innerText = pad;
+                btn.onclick = () => selectSeat(pad);
+                grid.appendChild(btn);
+            }
+        }
+
+        function openSeatModal(forGame = null) {
+            pendingLaunchGame = forGame;
+            const session = getUnifiedSession();
+            tempSelectedSeat = (session && session.type === "student") ? session.seat : "01";
+            updateSeatSelectionUI();
+
+            const modal = document.getElementById("seatModal");
+            modal.classList.add("show");
+        }
+
+        function closeSeatModal() {
+            const modal = document.getElementById("seatModal");
+            modal.classList.remove("show");
+            pendingLaunchGame = null;
+        }
+
+        function handleModalBackdrop(e) {
+            if (e.target.id === "seatModal") {
+                closeSeatModal();
+            }
+        }
+
+        function selectSeat(pad) {
+            tempSelectedSeat = pad;
+            updateSeatSelectionUI();
+        }
+
+        function updateSeatSelectionUI() {
+            document.querySelectorAll(".seat-btn").forEach(btn => btn.classList.remove("selected"));
+            if (tempSelectedSeat) {
+                const active = document.getElementById(`seatBtn_${tempSelectedSeat}`);
+                if (active) active.classList.add("selected");
+                document.getElementById("selectedSeatPreview").innerText = `已選擇：${tempSelectedSeat} 號`;
+            } else {
+                document.getElementById("selectedSeatPreview").innerText = "";
+            }
+        }
+
+        function confirmStudentLogin() {
+            if (!tempSelectedSeat) {
+                tempSelectedSeat = "01";
+            }
+            const studentSession = {
+                type: "student",
+                seat: tempSelectedSeat,
+                name: `${tempSelectedSeat} 號同學`,
+                grade: 3
+            };
+            syncSessionToAllGames(studentSession);
+            closeSeatModal();
+            refreshHubUI();
+            showToast(`🎉 歡迎 ${tempSelectedSeat} 號同學！3 款遊戲已全數完成連通授權`, "🎓");
+
+            if (pendingLaunchGame) {
+                const target = pendingLaunchGame;
+                pendingLaunchGame = null;
+                setTimeout(() => doLaunch(target), 400);
+            }
+        }
+
+        // 7. Launch Game with Single Sign-On
+        function launchGame(gameKey) {
+            const session = getUnifiedSession();
+            if (!session) {
+                // Not logged in yet, prompt modal
+                openSeatModal(gameKey);
+                return;
+            }
+
+            // Sync to guarantee
+            syncSessionToAllGames(session);
+            doLaunch(gameKey);
+        }
+
+        function doLaunch(gameKey) {
+            const session = getUnifiedSession();
+            const isGuest = (session && session.type === "guest");
+
+            if (gameKey === "vocab") {
+                const url = GAME_URLS.vocab + (isGuest ? "?guest=1" : "");
+                window.location.href = url;
+            } else if (gameKey === "quiz") {
+                // Direct to game.html because user session is in localStorage
+                const url = GAME_URLS.quiz + "?t=" + Date.now();
+                window.location.href = url;
+            } else if (gameKey === "flashcard") {
+                const url = GAME_URLS.flashcard + "?t=" + Date.now();
+                window.location.href = url;
+            }
+        }
+
+        // 8. Toast Helper
+        let toastTimeout = null;
+        function showToast(msg, icon = "🎉") {
+            const box = document.getElementById("toastBox");
+            document.getElementById("toastIcon").innerText = icon;
+            document.getElementById("toastMsg").innerText = msg;
+            box.classList.add("show");
+
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                box.classList.remove("show");
+            }, 3200);
+        }
+    </script>
 
 </body>
 </html>

@@ -467,7 +467,8 @@
                     </div>
 
                     <button onclick="handleLogin()" class="btn">🚀 登入 / 開始挑戰</button>
-                    <div style="text-align: center; margin-top: 5px;">
+                    <button type="button" onclick="loginAsGuest()" class="btn" style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.25) 100%); border: 1px solid rgba(251, 191, 36, 0.5); color: #fbbf24; margin-top: 10px;">✨ 訪客快速試玩 (免帳號密碼)</button>
+                    <div style="text-align: center; margin-top: 10px;">
                         <a href="#" onclick="openTeacherLogin()" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: none; font-weight: 600;">💼 教師/管理員後台</a>
                     </div>
                 </div>
@@ -789,6 +790,14 @@
             }
         }
 
+        function loginAsGuest() {
+            let guestId = localStorage.getItem("game_username");
+            if (!guestId || !guestId.startsWith("guest_")) {
+                guestId = "guest_" + Math.floor(1000 + Math.random() * 9000);
+            }
+            saveUserSession(guestId, "訪客體驗", "訪客專區 (試玩)", 10);
+        }
+
         function saveUserSession(username, name, school, unlockedLevel) {
             localStorage.setItem("game_username", username);
             localStorage.setItem("game_user_name", name);
@@ -932,6 +941,18 @@
                 document.getElementById("passwordError").style.display = "block";
             }
         }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get("guest") === "1") {
+                loginAsGuest();
+                return;
+            }
+            const savedUser = localStorage.getItem("game_username");
+            if (savedUser && urlParams.get("auto") === "1") {
+                window.location.href = "game.html?t=" + Date.now();
+            }
+        });
     </script>
 
     <!-- ================= CROSS-GAME SWITCHER WIDGET ================= -->
